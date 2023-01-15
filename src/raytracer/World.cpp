@@ -29,16 +29,16 @@ World::World(int width, int height) {
     // Left wall
     m_objects.push_back(Sphere().withTransformation(
             Transformations::translate(0, 0, 5)
-            * Transformations::rotate(-PI / 4, glm::vec3(0, 1, 0))
-            * Transformations::rotate(-PI / 2, glm::vec3(1, 0, 0))
+            * Transformations::rotate(-PI / 4, glm::dvec3(0, 1, 0))
+            * Transformations::rotate(-PI / 2, glm::dvec3(1, 0, 0))
             * Transformations::scale(10, 0.01, 10)
     ).withMaterial(wallMaterial));
 
     // Right wall
     m_objects.push_back(Sphere().withTransformation(
             Transformations::translate(0, 0, 5)
-            * Transformations::rotate(PI / 4, glm::vec3(0, 1, 0))
-            * Transformations::rotate(PI / 2, glm::vec3(1, 0, 0))
+            * Transformations::rotate(PI / 4, glm::dvec3(0, 1, 0))
+            * Transformations::rotate(PI / 2, glm::dvec3(1, 0, 0))
             * Transformations::scale(10, 0.01, 10)
     ).withMaterial(wallMaterial));
 }

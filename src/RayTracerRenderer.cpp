@@ -36,12 +36,12 @@ Color RayTracerRenderer::colorAt(const Ray &ray) const {
 }
 
 
-Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &eye,
-                                  const glm::vec4 &point) const {
+Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light, const glm::dvec4 &eye,
+                                  const glm::dvec4 &point) const {
     auto material = sphere.getMaterial();
     auto normal = sphere.getNormalAt(point);
     // TODO removing acne. But the 100 multiplier should not be necessary
-    auto overPoint = point + normal * PRECISION * 100.0f;
+    auto overPoint = point + normal * PRECISION;
     if (isShadowed(overPoint, normal)) {
         return { 0.1, 0.1, 0.1, 1.0 };
     }
@@ -67,15 +67,15 @@ Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light,
 
 Ray RayTracerRenderer::rayForPixel(int x, int y) const {
     auto camera = m_world.getCamera();
-    float xOffset = (x + 0.5) * camera.getPixelSize();
-    float yOffset = (y + 0.5) * camera.getPixelSize();
+    double xOffset = (x + 0.5) * camera.getPixelSize();
+    double yOffset = (y + 0.5) * camera.getPixelSize();
 
-    float worldX = camera.getHalfWidth() - xOffset;
-    float worldY = camera.getHalfHeight() - yOffset;
+    double worldX = camera.getHalfWidth() - xOffset;
+    double worldY = camera.getHalfHeight() - yOffset;
 
     auto viewInverse = glm::inverse(camera.getViewMatrix());
-    auto pixel = viewInverse * glm::vec4(worldX, worldY, -1, 1);
-    auto origin = viewInverse * glm::vec4(0, 0, 0, 1);
+    auto pixel = viewInverse * glm::dvec4(worldX, worldY, -1, 1);
+    auto origin = viewInverse * glm::dvec4(0, 0, 0, 1);
     auto direction = glm::normalize(pixel - origin);
 
     return Ray(origin, direction);
@@ -85,7 +85,7 @@ World &RayTracerRenderer::getWorld() {
     return m_world;
 }
 
-bool RayTracerRenderer::isShadowed(const glm::vec4 &point, const glm::vec4 &normal) const {
+bool RayTracerRenderer::isShadowed(const glm::dvec4 &point, const glm::dvec4 &normal) const {
     for (auto &light: m_world.getLights()) {
         auto v = light.getPosition() - point;
         auto distance = glm::length(v);

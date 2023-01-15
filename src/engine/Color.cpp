@@ -3,16 +3,16 @@
 
 Color::Color() = default;
 
-Color::Color(float r, float g, float b, float a) {
+Color::Color(double r, double g, double b, double a) {
     setRGBA(r, g, b, a);
 }
 
-Color::Color(const glm::vec4 &v) {
+Color::Color(const glm::dvec4 &v) {
     setRGBA(v.x, v.y, v.z, v.w);
 }
 
 
-void Color::setRGB(float r, float g, float b) {
+void Color::setRGB(double r, double g, double b) {
     setRGBA(r, g, b, m_alpha);
 }
 
@@ -32,7 +32,7 @@ void Color::copy(const Color &color) {
     m_alpha = color.m_alpha;
 }
 
-Color Color::operator*(float intensity) const {
+Color Color::operator*(double intensity) const {
     Color result;
     result.copy(*this);
     result.m_red *= intensity;
@@ -50,20 +50,28 @@ std::array<uint8_t, 4> Color::toRGB() const {
     };
 }
 
-std::array<float, 4> Color::fromRGB() const {
+std::array<double, 4> Color::fromRGB() const {
     return {
-            static_cast<float>(m_red / 255),
-            static_cast<float>(m_green / 255),
-            static_cast<float>(m_blue / 255),
-            static_cast<float>(m_alpha / 255)
+            static_cast<double>(m_red / 255),
+            static_cast<double>(m_green / 255),
+            static_cast<double>(m_blue / 255),
+            static_cast<double>(m_alpha / 255)
     };
 }
 
-void Color::setRGBA(float r, float g, float b, float a) {
-    m_red = std::max(std::min(r, 1.0f), 0.0f);
-    m_green = std::max(std::min(g, 1.0f), 0.0f);
-    m_blue = std::max(std::min(b, 1.0f), 0.0f);
-    m_alpha = std::max(std::min(a, 1.0f), 0.0f);
+static double min(double a, double b) {
+    return a < b ? a: b;
+}
+
+static double max(double a, double b) {
+    return a > b ? a: b;
+}
+
+void Color::setRGBA(double r, double g, double b, double a) {
+    m_red = max(min(r, 1.0f), 0.0f);
+    m_green = max(min(g, 1.0f), 0.0f);
+    m_blue = max(min(b, 1.0f), 0.0f);
+    m_alpha = max(min(a, 1.0f), 0.0f);
 }
 
 Color Color::operator+(const Color &other) const {
@@ -75,7 +83,7 @@ Color Color::operator+(const Color &other) const {
     };
 }
 
-Color Color::operator+(const float value) const {
+Color Color::operator+(const double value) const {
     return {
         m_red + value,
         m_green + value,

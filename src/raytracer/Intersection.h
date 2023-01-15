@@ -4,7 +4,7 @@
 class Sphere;
 
 struct Intersection {
-    float distance;
+    double distance;
     const Sphere *object;
 };
 

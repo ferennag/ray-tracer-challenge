@@ -2,27 +2,27 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Transformations.h"
 
-glm::mat4 Transformations::identity() {
-    return glm::mat4(1);
+glm::dmat4 Transformations::identity() {
+    return glm::dmat4(1);
 }
 
-glm::mat4 Transformations::translate(float x, float y, float z) {
+glm::dmat4 Transformations::translate(double x, double y, double z) {
     return translate({x,y,z});
 }
 
-glm::mat4 Transformations::translate(const glm::vec3 &factor) {
+glm::dmat4 Transformations::translate(const glm::dvec3 &factor) {
     return glm::translate(identity(), factor);
 }
 
-glm::mat4 Transformations::scale(float x, float y, float z) {
+glm::dmat4 Transformations::scale(double x, double y, double z) {
     return scale({ x, y, z });
 }
 
-glm::mat4 Transformations::scale(const glm::vec3 &factor) {
+glm::dmat4 Transformations::scale(const glm::dvec3 &factor) {
     return glm::scale(identity(), factor);
 }
 
-glm::mat4 Transformations::rotate(const float angle, const glm::vec3 &axes) {
+glm::dmat4 Transformations::rotate(const double angle, const glm::dvec3 &axes) {
     return glm::rotate(identity(), angle, axes);
 }
 

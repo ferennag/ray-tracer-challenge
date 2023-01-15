@@ -10,7 +10,7 @@ class Sphere;
 class Intersections {
 public:
     Intersections() = default;
-    void addIntersection(const Sphere *object, float distance);
+    void addIntersection(const Sphere *object, double distance);
     void addIntersections(const Intersections &other);
     [[nodiscard]] std::optional<Intersection> hit();
 private:

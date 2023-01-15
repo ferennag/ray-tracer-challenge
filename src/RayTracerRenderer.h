@@ -19,8 +19,8 @@ public:
 protected:
     World m_world;
 
-    [[nodiscard]] Color lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &eye, const glm::vec4 &point) const;
-    [[nodiscard]] bool isShadowed(const glm::vec4 &point, const glm::vec4 &normal) const;
+    [[nodiscard]] Color lighting(const Sphere &sphere, const PointLight &light, const glm::dvec4 &eye, const glm::dvec4 &point) const;
+    [[nodiscard]] bool isShadowed(const glm::dvec4 &point, const glm::dvec4 &normal) const;
     Color colorAt(const Ray &ray) const;
 };
 

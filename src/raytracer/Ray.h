@@ -6,18 +6,18 @@
 
 class Ray {
 public:
-    Ray(glm::vec3 point, glm::vec3 direction);
+    Ray(glm::dvec3 point, glm::dvec3 direction);
 
-    glm::vec4 at(float distance) const;
+    glm::dvec4 at(double distance) const;
 
-    [[nodiscard]] glm::vec4 getOrigin() const { return m_origin; }
+    [[nodiscard]] glm::dvec4 getOrigin() const { return m_origin; }
 
-    [[nodiscard]] glm::vec4 getDirection() const { return m_direction; }
+    [[nodiscard]] glm::dvec4 getDirection() const { return m_direction; }
 
-    Ray transform(glm::mat4 transformation) const;
+    Ray transform(glm::dmat4 transformation) const;
 
 private:
-    glm::vec4 m_origin, m_direction;
+    glm::dvec4 m_origin, m_direction;
 };
 
 
