@@ -40,7 +40,6 @@ Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light,
                                   const glm::dvec4 &point) const {
     auto material = sphere.getMaterial();
     auto normal = sphere.getNormalAt(point);
-    // TODO removing acne. But the 100 multiplier should not be necessary
     auto overPoint = point + normal * PRECISION;
     if (isShadowed(overPoint, normal)) {
         return { 0.1, 0.1, 0.1, 1.0 };
