@@ -1,30 +1,32 @@
 #include <algorithm>
 #include "Intersections.h"
 
-std::optional<Intersection> Intersections::hit() const {
+std::optional<Intersection> Intersections::hit() {
     if (m_intersections.empty()) {
         return std::nullopt;
     }
 
-    for (auto &x: m_intersections) {
-        if (x.distance > 0) {
-            return std::make_optional<Intersection>(x);
-        }
-    }
+    sort();
 
-    return std::nullopt;
+    auto result = std::find_if(m_intersections.begin(), m_intersections.end(), [](const Intersection &x) {
+        return x.distance > 0;
+    });
+
+    if (result == m_intersections.end()) {
+        return std::nullopt;
+    } else {
+        return std::make_optional<Intersection>(*result);
+    }
 }
 
 void Intersections::addIntersection(const Sphere *object, float distance) {
     m_intersections.push_back({ .distance = distance, .object = object });
-    sort();
 }
 
 void Intersections::addIntersections(const Intersections &other) {
     for (const auto &x: other.m_intersections) {
         m_intersections.push_back(x);
     }
-    sort();
 }
 
 void Intersections::sort() {

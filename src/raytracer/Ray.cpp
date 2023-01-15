@@ -12,5 +12,5 @@ glm::vec4 Ray::at(float distance) {
 Ray Ray::transform(glm::mat4 transformation) const {
     auto position = transformation * m_origin;
     auto direction = transformation * m_direction;
-    return { position, glm::normalize(direction) };
+    return { position, direction };
 }

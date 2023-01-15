@@ -15,9 +15,9 @@ void RayTracerRenderer::render() {
 
     std::vector<PointLight> lights = m_world.getLights();
     for (int y = 0; y < m_height; ++y) {
-        float worldY = half - pixelSize.y * y;
+        float worldY = half - pixelSize.y * static_cast<float>(y);
         for (int x = 0; x < m_width; ++x) {
-            float worldX = -half + pixelSize.x * x;
+            float worldX = -half + pixelSize.x * static_cast<float>(x);
             glm::vec3 position { worldX, worldY, wallZ };
             Ray ray(rayOrigin, glm::normalize(position - rayOrigin));
             m_eye = -ray.getDirection();

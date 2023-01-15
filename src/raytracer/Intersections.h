@@ -12,7 +12,7 @@ public:
     Intersections() = default;
     void addIntersection(const Sphere *object, float distance);
     void addIntersections(const Intersections &other);
-    [[nodiscard]] std::optional<Intersection> hit() const;
+    [[nodiscard]] std::optional<Intersection> hit();
 private:
     std::vector<Intersection> m_intersections;
 
