@@ -14,11 +14,14 @@ public:
     ~RayTracerRenderer() override = default;
 
     void render() override;
+    Ray rayForPixel(int x, int y) const;
+    World &getWorld();
 protected:
     World m_world;
-    glm::vec4 m_eye;
 
-    [[nodiscard]] Color lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &point) const;
+    [[nodiscard]] Color lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &eye, const glm::vec4 &point) const;
+    [[nodiscard]] bool isShadowed(const glm::vec4 &point, const glm::vec4 &normal) const;
+    Color colorAt(const Ray &ray) const;
 };
 
 

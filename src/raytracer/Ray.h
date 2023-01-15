@@ -8,7 +8,7 @@ class Ray {
 public:
     Ray(glm::vec3 point, glm::vec3 direction);
 
-    glm::vec4 at(float distance);
+    glm::vec4 at(float distance) const;
 
     [[nodiscard]] glm::vec4 getOrigin() const { return m_origin; }
 

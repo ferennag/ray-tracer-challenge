@@ -14,6 +14,7 @@ public:
 
     Intersections intersect(const Ray &ray) const;
     Sphere &withTransformation(const glm::mat4 &transformation);
+    Sphere &withMaterial(const Material &material);
     glm::mat4 getTransformation();
 
     glm::vec4 getNormalAt(const glm::vec4 &point) const;

@@ -4,16 +4,19 @@
 #include <vector>
 #include "PointLight.h"
 #include "Sphere.h"
+#include "Camera.h"
 
 class World {
 public:
-    World();
+    World(int width, int height);
 
-    Intersections intersect(const Ray &ray);
+    Intersections intersect(const Ray &ray) const;
     std::vector<PointLight> getLights() const;
+    Camera getCamera() const;
 private:
     std::vector<Sphere> m_objects;
     std::vector<PointLight> m_lights;
+    Camera m_camera;
 };
 
 

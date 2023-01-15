@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 #include "../src/raytracer/Sphere.h"
 #include "../src/raytracer/Transformations.h"
-
-const float PRECISION = 0.00001;
-const float PI = glm::pi<float>();
+#include "../src/raytracer/RayMath.h"
 
 TEST(SphereTest, normalAtWithTranslation) {
     Sphere s;

@@ -50,3 +50,8 @@ Sphere &Sphere::withTransformation(const glm::mat4 &transformation) {
     m_modelInverseTranspose = glm::transpose(m_modelInverse);
     return *this;
 }
+
+Sphere &Sphere::withMaterial(const Material &material) {
+    m_material = material;
+    return *this;
+}

@@ -1,47 +1,53 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include "RayTracerRenderer.h"
 #include "raytracer/Ray.h"
+#include "raytracer/RayMath.h"
 #include "raytracer/Sphere.h"
 
-RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height) {
+RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
 }
 
 void RayTracerRenderer::render() {
-    clear();
-
-    glm::vec3 rayOrigin { 0, 0, -5 };
-    float wallZ { 5 }, wallSize { 7.0 };
-    float half { wallSize / 2 };
-    glm::vec2 pixelSize { wallSize / static_cast<float>(m_width), wallSize / static_cast<float>(m_height) };
-
-    std::vector<PointLight> lights = m_world.getLights();
     for (int y = 0; y < m_height; ++y) {
-        float worldY = half - pixelSize.y * static_cast<float>(y);
         for (int x = 0; x < m_width; ++x) {
-            float worldX = -half + pixelSize.x * static_cast<float>(x);
-            glm::vec3 position { worldX, worldY, wallZ };
-            Ray ray(rayOrigin, glm::normalize(position - rayOrigin));
-            m_eye = -ray.getDirection();
-            auto intersections = m_world.intersect(ray);
-            auto hit = intersections.hit();
-
-            if (hit.has_value()) {
-                auto intersection = hit.value();
-                auto point = ray.at(intersection.distance);
-                Color finalColor { 0, 0, 0, 1 };
-                for (auto &light: lights) {
-                    finalColor += lighting(*intersection.object, light, point);
-                }
-                m_buffer[y][x].copy(finalColor);
-            }
+            auto ray = rayForPixel(x, y);
+            auto color = colorAt(ray);
+            m_buffer[y][x].copy(color);
         }
     }
 }
 
-Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &point) const {
+Color RayTracerRenderer::colorAt(const Ray &ray) const {
+    auto eye = -ray.getDirection();
+    auto intersections = m_world.intersect(ray);
+    auto hit = intersections.hit();
+
+    if (hit.has_value()) {
+        auto intersection = hit.value();
+        auto point = ray.at(intersection.distance);
+        Color finalColor { 0, 0, 0, 1 };
+        for (auto &light: m_world.getLights()) {
+            finalColor += lighting(*intersection.object, light, eye, point);
+        }
+        return finalColor;
+    } else {
+        return { 0, 0, 0, 1 };
+    }
+}
+
+
+Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light, const glm::vec4 &eye,
+                                  const glm::vec4 &point) const {
     auto material = sphere.getMaterial();
     auto normal = sphere.getNormalAt(point);
+    // TODO removing acne. But the 100 multiplier should not be necessary
+    auto overPoint = point + normal * PRECISION * 100.0f;
+    if (isShadowed(overPoint, normal)) {
+        return { 0.1, 0.1, 0.1, 1.0 };
+    }
+
     auto effectiveColor = material.color * light.getIntensity();
-    auto lightDir = glm::normalize(light.getPosition() - point);
+    auto lightDir = glm::normalize(light.getPosition() - overPoint);
     auto ambient = effectiveColor * material.ambient;
     auto lightNormalAngle = glm::dot(lightDir, normal);
 
@@ -51,10 +57,48 @@ Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light,
 
     auto diffuse = effectiveColor * material.diffuse * lightNormalAngle;
     auto reflectDir = glm::reflect(-lightDir, normal);
-    auto reflectEyeAngle = glm::dot(reflectDir, m_eye);
+    auto reflectEyeAngle = glm::dot(reflectDir, eye);
 
     auto factor = glm::pow(reflectEyeAngle, material.shininess);
     auto specular = light.getIntensity() * material.specular * factor;
 
     return ambient + diffuse + specular;
 }
+
+Ray RayTracerRenderer::rayForPixel(int x, int y) const {
+    auto camera = m_world.getCamera();
+    float xOffset = (x + 0.5) * camera.getPixelSize();
+    float yOffset = (y + 0.5) * camera.getPixelSize();
+
+    float worldX = camera.getHalfWidth() - xOffset;
+    float worldY = camera.getHalfHeight() - yOffset;
+
+    auto viewInverse = glm::inverse(camera.getViewMatrix());
+    auto pixel = viewInverse * glm::vec4(worldX, worldY, -1, 1);
+    auto origin = viewInverse * glm::vec4(0, 0, 0, 1);
+    auto direction = glm::normalize(pixel - origin);
+
+    return Ray(origin, direction);
+}
+
+World &RayTracerRenderer::getWorld() {
+    return m_world;
+}
+
+bool RayTracerRenderer::isShadowed(const glm::vec4 &point, const glm::vec4 &normal) const {
+    for (auto &light: m_world.getLights()) {
+        auto v = light.getPosition() - point;
+        auto distance = glm::length(v);
+        auto direction = glm::normalize(v);
+
+        auto ray = Ray { point, direction };
+        auto intersections = m_world.intersect(ray);
+        auto hit = intersections.hit();
+
+        if (hit.has_value() && hit.value().distance < distance) {
+            return true;
+        }
+    }
+    return false;
+}
+

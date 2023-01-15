@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include "../engine/Color.h"
 
+//http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
 struct Material {
     Color color { 0.7, 0.4, 0.4, 1.0 };
     float ambient { 0.1 };

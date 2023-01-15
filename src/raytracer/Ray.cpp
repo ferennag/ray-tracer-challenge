@@ -5,7 +5,7 @@ Ray::Ray(glm::vec3 point, glm::vec3 direction) {
     m_direction = glm::vec4(direction, 0.0);
 }
 
-glm::vec4 Ray::at(float distance) {
+glm::vec4 Ray::at(float distance) const {
     return m_origin + m_direction * distance;
 }
 
