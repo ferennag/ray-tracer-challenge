@@ -7,28 +7,18 @@
 #include "Intersections.h"
 #include "../engine/Color.h"
 #include "Material.h"
+#include "Shape.h"
 
-class Sphere {
+class Sphere: public Shape {
 public:
     Sphere();
-    ~Sphere() = default;
+    ~Sphere() override = default;
 
-    Intersections intersect(const Ray &ray) const;
-    Sphere &withTransformation(const glm::dmat4 &transformation);
-    Sphere &withMaterial(const Material &material);
-    glm::dmat4 getTransformation();
-
-    glm::dvec4 getNormalAt(const glm::dvec4 &point) const;
-    Color getColor() const { return m_color; }
-    Material getMaterial() const { return m_material; }
+    [[nodiscard]] Intersections intersect(const Ray &ray) const override;
+    [[nodiscard]] glm::dvec4 getNormalAt(const glm::dvec4 &point) const override;
 
 private:
-    Material m_material;
     glm::dvec4 m_position { 0, 0, 0, 1 };
-    glm::dmat4 m_model { glm::identity<glm::dmat4>() };
-    glm::dmat4 m_modelInverse { glm::identity<glm::dmat4>() };
-    glm::dmat4 m_modelInverseTranspose { glm::identity<glm::dmat4>() };
-    Color m_color { 1, 1, 1, 1 };
 };
 
 

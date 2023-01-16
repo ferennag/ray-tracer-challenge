@@ -19,7 +19,7 @@ std::optional<Intersection> Intersections::hit() {
     }
 }
 
-void Intersections::addIntersection(const Sphere *object, double distance) {
+void Intersections::addIntersection(const Shape *object, double distance) {
     m_intersections.push_back({ .distance = distance, .object = object });
 }
 

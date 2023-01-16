@@ -1,9 +1,10 @@
 #ifndef RAY_TRACER_CHALLENGE_WORLD_H
 #define RAY_TRACER_CHALLENGE_WORLD_H
 
+#include <memory>
 #include <vector>
 #include "PointLight.h"
-#include "Sphere.h"
+#include "Shape.h"
 #include "Camera.h"
 
 class World {
@@ -14,7 +15,7 @@ public:
     std::vector<PointLight> getLights() const;
     Camera getCamera() const;
 private:
-    std::vector<Sphere> m_objects;
+    std::vector<std::unique_ptr<Shape>> m_objects;
     std::vector<PointLight> m_lights;
     Camera m_camera;
 };

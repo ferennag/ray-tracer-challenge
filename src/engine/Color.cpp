@@ -1,6 +1,16 @@
 #include <cmath>
 #include "Color.h"
 
+
+static double min(double a, double b) {
+    return a < b ? a: b;
+}
+
+static double max(double a, double b) {
+    return a > b ? a: b;
+}
+
+
 Color::Color() = default;
 
 Color::Color(double r, double g, double b, double a) {
@@ -43,10 +53,10 @@ Color Color::operator*(double intensity) const {
 
 std::array<uint8_t, 4> Color::toRGB() const {
     return {
-            static_cast<uint8_t>(round(m_red * 255)),
-            static_cast<uint8_t>(round(m_green * 255)),
-            static_cast<uint8_t>(round(m_blue * 255)),
-            static_cast<uint8_t>(round(m_alpha * 255))
+            static_cast<uint8_t>(min(round(m_red * 255), 255)),
+            static_cast<uint8_t>(min(round(m_green * 255), 255)),
+            static_cast<uint8_t>(min(round(m_blue * 255), 255)),
+            static_cast<uint8_t>(min(round(m_alpha * 255), 255))
     };
 }
 
@@ -59,19 +69,11 @@ std::array<double, 4> Color::fromRGB() const {
     };
 }
 
-static double min(double a, double b) {
-    return a < b ? a: b;
-}
-
-static double max(double a, double b) {
-    return a > b ? a: b;
-}
-
 void Color::setRGBA(double r, double g, double b, double a) {
-    m_red = max(min(r, 1.0f), 0.0f);
-    m_green = max(min(g, 1.0f), 0.0f);
-    m_blue = max(min(b, 1.0f), 0.0f);
-    m_alpha = max(min(a, 1.0f), 0.0f);
+    m_red = r;
+    m_green = g;
+    m_blue = b;
+    m_alpha = a;
 }
 
 Color Color::operator+(const Color &other) const {

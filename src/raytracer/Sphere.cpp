@@ -1,6 +1,6 @@
 #include "Sphere.h"
 
-Sphere::Sphere() {
+Sphere::Sphere(): Shape() {
     withTransformation(glm::identity<glm::dmat4>());
 }
 
@@ -32,26 +32,10 @@ Intersections Sphere::intersect(const Ray &ray) const {
     return result;
 }
 
-glm::dmat4 Sphere::getTransformation() {
-    return m_model;
-}
-
 glm::dvec4 Sphere::getNormalAt(const glm::dvec4 &point) const {
     auto localPoint = m_modelInverse * point;
     auto localNormal = localPoint - m_position;
     auto worldNormal = m_modelInverseTranspose * localNormal;
     worldNormal.w = 0.0f;
     return glm::normalize(worldNormal);
-}
-
-Sphere &Sphere::withTransformation(const glm::dmat4 &transformation) {
-    m_model = transformation;
-    m_modelInverse = glm::inverse(m_model);
-    m_modelInverseTranspose = glm::transpose(m_modelInverse);
-    return *this;
-}
-
-Sphere &Sphere::withMaterial(const Material &material) {
-    m_material = material;
-    return *this;
 }

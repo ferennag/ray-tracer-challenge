@@ -1,11 +1,11 @@
 #ifndef RAY_TRACER_CHALLENGE_INTERSECTION_H
 #define RAY_TRACER_CHALLENGE_INTERSECTION_H
 
-class Sphere;
+class Shape;
 
 struct Intersection {
     double distance;
-    const Sphere *object;
+    const Shape *object;
 };
 
 #endif //RAY_TRACER_CHALLENGE_INTERSECTION_H

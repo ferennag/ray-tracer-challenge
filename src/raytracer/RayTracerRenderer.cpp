@@ -46,8 +46,9 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
         for (int x = minX; x < maxX; ++x) {
             auto ray = rayForPixel(x, y);
             auto color = colorAt(ray);
-            // We are not changing the content of the vector, so this is considered a reading operation from the
-            // vector's perspective. Thus, this operation is thread safe, no need for mutex.
+            // We are not changing the content of the vector (only the values in the objects stored in the vector),
+            // so this is considered a reading operation from the vector's perspective.
+            // Thus, this operation is thread safe, no need for mutex.
             m_buffer[y][x].copy(color);
         }
     }
@@ -74,10 +75,10 @@ Color RayTracerRenderer::colorAt(const Ray &ray) const {
 }
 
 
-Color RayTracerRenderer::lighting(const Sphere &sphere, const PointLight &light, const glm::dvec4 &eye,
+Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, const glm::dvec4 &eye,
                                   const glm::dvec4 &point) const {
-    auto material = sphere.getMaterial();
-    auto normal = sphere.getNormalAt(point);
+    auto material = shape.getMaterial();
+    auto normal = shape.getNormalAt(point);
     auto overPoint = point + normal * PRECISION;
     if (isShadowed(overPoint, normal)) {
         return { 0.1, 0.1, 0.1, 1.0 };

@@ -21,7 +21,7 @@ protected:
     Ray rayForPixel(int x, int y) const;
     Color colorAt(const Ray &ray) const;
     [[nodiscard]] Color
-    lighting(const Sphere &sphere, const PointLight &light, const glm::dvec4 &eye, const glm::dvec4 &point) const;
+    lighting(const Shape &shape, const PointLight &light, const glm::dvec4 &eye, const glm::dvec4 &point) const;
     [[nodiscard]] bool isShadowed(const glm::dvec4 &point, const glm::dvec4 &normal) const;
     void renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result);
 };
