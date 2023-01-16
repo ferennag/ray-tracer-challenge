@@ -19,5 +19,4 @@ private:
     Camera m_camera;
 };
 
-
 #endif //RAY_TRACER_CHALLENGE_WORLD_H

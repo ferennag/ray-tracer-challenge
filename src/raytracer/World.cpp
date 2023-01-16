@@ -1,3 +1,4 @@
+#include <iostream>
 #include "World.h"
 #include "Transformations.h"
 #include "RayMath.h"
@@ -45,10 +46,12 @@ World::World(int width, int height) {
 
 Intersections World::intersect(const Ray &ray) const {
     Intersections result;
+
     for (const auto &object: m_objects) {
         auto xs = object.intersect(ray);
         result.addIntersections(xs);
     }
+
     return result;
 }
 

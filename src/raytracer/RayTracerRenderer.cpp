@@ -1,21 +1,59 @@
+#include <iostream>
+#include <thread>
+#include <future>
 #include <glm/gtc/matrix_transform.hpp>
 #include "RayTracerRenderer.h"
-#include "raytracer/Ray.h"
-#include "raytracer/RayMath.h"
-#include "raytracer/Sphere.h"
+#include "Ray.h"
+#include "RayMath.h"
+#include "Sphere.h"
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
 }
 
 void RayTracerRenderer::render() {
-    for (int y = 0; y < m_height; ++y) {
-        for (int x = 0; x < m_width; ++x) {
+    const auto maxThreads = std::thread::hardware_concurrency();
+    // The number of blocks in each row/column to render separately
+    // In total we want as many blocks as threads are available
+    const auto blockCount = floor(sqrt(maxThreads));
+    const auto dx = m_width / blockCount;
+    const auto dy = m_height / blockCount;
+
+    std::vector<std::future<void>> threads;
+    for (int row = 0; row < blockCount; ++row) {
+        for (int col = 0; col < blockCount; ++col) {
+            auto minX = col * dx;
+            auto maxX = col * dx + dx;
+            auto minY = row * dy;
+            auto maxY = row * dy + dy;
+            std::promise<void> promise;
+            threads.push_back(promise.get_future());
+            std::thread thread(&RayTracerRenderer::renderArea, this, minX, minY, maxX, maxY, std::move(promise));
+            thread.detach();
+        }
+    }
+
+    // Wait for the full scene to be rendered, otherwise there will be artifacts
+    for (auto &future: threads) {
+        future.wait();
+    }
+}
+
+/**
+ * Renders only a specific rectangular area of the scene. Sets the value of the promise when the rendering completed.
+ */
+void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result) {
+    for (int y = minY; y < maxY; ++y) {
+        for (int x = minX; x < maxX; ++x) {
             auto ray = rayForPixel(x, y);
             auto color = colorAt(ray);
+            // We are not changing the content of the vector, so this is considered a reading operation from the
+            // vector's perspective. Thus, this operation is thread safe, no need for mutex.
             m_buffer[y][x].copy(color);
         }
     }
+    result.set_value();
 }
+
 
 Color RayTracerRenderer::colorAt(const Ray &ray) const {
     auto eye = -ray.getDirection();
@@ -72,16 +110,12 @@ Ray RayTracerRenderer::rayForPixel(int x, int y) const {
     double worldX = camera.getHalfWidth() - xOffset;
     double worldY = camera.getHalfHeight() - yOffset;
 
-    auto viewInverse = glm::inverse(camera.getViewMatrix());
+    auto viewInverse = camera.getInverseViewMatrix();
     auto pixel = viewInverse * glm::dvec4(worldX, worldY, -1, 1);
     auto origin = viewInverse * glm::dvec4(0, 0, 0, 1);
     auto direction = glm::normalize(pixel - origin);
 
     return Ray(origin, direction);
-}
-
-World &RayTracerRenderer::getWorld() {
-    return m_world;
 }
 
 bool RayTracerRenderer::isShadowed(const glm::dvec4 &point, const glm::dvec4 &normal) const {
@@ -100,4 +134,3 @@ bool RayTracerRenderer::isShadowed(const glm::dvec4 &point, const glm::dvec4 &no
     }
     return false;
 }
-

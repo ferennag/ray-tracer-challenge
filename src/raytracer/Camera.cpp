@@ -13,18 +13,33 @@ Camera::Camera(int w, int h, double fov) {
     }
 
     m_pixelSize = m_halfW * 2.0f / static_cast<double>(h);
+    computeViewMatrices();
 }
 
 glm::dmat4 Camera::getViewMatrix() const {
-    return glm::lookAt(glm::dvec3(m_position), glm::dvec3(m_target), { 0, 1, 0 });
+    if (m_dirty) {
+        computeViewMatrices();
+    }
+
+    return m_view;
+}
+
+glm::dmat4 Camera::getInverseViewMatrix() const {
+    if (m_dirty) {
+        computeViewMatrices();
+    }
+
+    return m_inverseView;
 }
 
 void Camera::setPosition(const glm::dvec3 &pos) {
     m_position = glm::dvec4(pos, 1.0);
+    m_dirty = true;
 }
 
 void Camera::setTarget(const glm::dvec3 &target) {
     m_target = glm::dvec4(target, 1.0);
+    m_dirty = true;
 }
 
 double Camera::getPixelSize() const {
@@ -37,4 +52,10 @@ double Camera::getHalfWidth() const {
 
 double Camera::getHalfHeight() const {
     return m_halfH;
+}
+
+void Camera::computeViewMatrices() const {
+    m_view = glm::lookAt(glm::dvec3(m_position), glm::dvec3(m_target), { 0, 1, 0 });
+    m_inverseView = glm::inverse(m_view);
+    m_dirty = false;
 }

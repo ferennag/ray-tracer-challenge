@@ -9,7 +9,7 @@ glm::dvec4 Ray::at(double distance) const {
     return m_origin + m_direction * distance;
 }
 
-Ray Ray::transform(glm::dmat4 transformation) const {
+Ray Ray::transform(const glm::dmat4 &transformation) const {
     auto position = transformation * m_origin;
     auto direction = transformation * m_direction;
     return { position, direction };

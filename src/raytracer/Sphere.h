@@ -11,6 +11,7 @@
 class Sphere {
 public:
     Sphere();
+    ~Sphere() = default;
 
     Intersections intersect(const Ray &ray) const;
     Sphere &withTransformation(const glm::dmat4 &transformation);

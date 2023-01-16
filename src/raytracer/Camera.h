@@ -15,11 +15,18 @@ public:
     [[nodiscard]] double getHalfHeight() const;
 
     [[nodiscard]] glm::dmat4 getViewMatrix() const;
+    [[nodiscard]] glm::dmat4 getInverseViewMatrix() const;
 private:
     glm::dvec4 m_position { 0, 1, -3, 1 };
     glm::dvec4 m_target { 0, 0, 0, 1 };
     double m_halfW { 0 }, m_halfH { 0 };
     double m_pixelSize { 0 };
+
+    mutable bool m_dirty { false };
+    mutable glm::dmat4 m_view { 1 };
+    mutable glm::dmat4 m_inverseView { 1 };
+
+    void computeViewMatrices() const;
 };
 
 
