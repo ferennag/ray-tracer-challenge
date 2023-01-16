@@ -5,7 +5,7 @@
 #include "RayTracerRenderer.h"
 #include "Ray.h"
 #include "RayMath.h"
-#include "Sphere.h"
+#include "shapes/Sphere.h"
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
 }
@@ -81,7 +81,7 @@ Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, c
     auto normal = shape.getNormalAt(point);
     auto overPoint = point + normal * PRECISION;
     if (isShadowed(overPoint, normal)) {
-        return { 0.1, 0.1, 0.1, 1.0 };
+        return { 0.0, 0.0, 0.0, 1.0 };
     }
 
     auto effectiveColor = material.color * light.getIntensity();

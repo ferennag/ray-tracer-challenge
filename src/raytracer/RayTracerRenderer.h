@@ -6,7 +6,7 @@
 #include "../engine/Renderer.h"
 #include "PointLight.h"
 #include "Material.h"
-#include "Sphere.h"
+#include "shapes/Sphere.h"
 #include "World.h"
 
 class RayTracerRenderer : public Renderer {

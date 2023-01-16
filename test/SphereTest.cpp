@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/raytracer/Sphere.h"
+#include "../src/raytracer/shapes/Sphere.h"
 #include "../src/raytracer/Transformations.h"
 #include "../src/raytracer/RayMath.h"
 

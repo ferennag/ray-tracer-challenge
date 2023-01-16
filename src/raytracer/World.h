@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 #include "PointLight.h"
-#include "Shape.h"
+#include "shapes/Shape.h"
 #include "Camera.h"
 
 class World {
