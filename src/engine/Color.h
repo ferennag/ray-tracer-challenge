@@ -18,10 +18,19 @@ public:
     [[nodiscard]] uint32_t getUint32() const;
 
     Color operator*(double intensity) const;
-    Color& operator*=(const Color& rhs);
+    Color &operator*=(const Color &rhs);
     Color operator+(const Color &other) const;
-    Color& operator+=(const Color& rhs);
+    Color &operator+=(const Color &rhs);
     Color operator+(const double value) const;
+
+    static Color black() {
+        return Color(0, 0, 0, 1);
+    }
+
+    static Color white() {
+        return Color(1, 1, 1, 1);
+    }
+
 private:
     double m_red { 0 }, m_green { 0 }, m_blue { 0 }, m_alpha { 1 };
 

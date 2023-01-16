@@ -17,6 +17,7 @@ public:
     [[nodiscard]] virtual Intersections localIntersect(const Ray &ray) const = 0;
     [[nodiscard]] virtual glm::dvec4 getLocalNormalAt(const glm::dvec4 &point) const = 0;
     [[nodiscard]] virtual glm::dvec4 getNormalAt(const glm::dvec4 &point) const;
+    [[nodiscard]] virtual Color getColorAt(const glm::dvec4 &point) const;
 
     Shape &withTransformation(const glm::dmat4 &transformation);
     Shape &withMaterial(const Material &material);
