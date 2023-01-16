@@ -26,13 +26,13 @@ Intersections Shape::intersect(const Ray &ray) const {
 }
 
 Color Shape::getColorAt(const glm::dvec4 &point) const {
-    if (!m_material.pattern.has_value()) {
+    if (!m_material.pattern) {
         return m_material.color;
     }
 
-    auto pattern = m_material.pattern.value();
+    auto pattern = m_material.pattern.get();
     auto localPoint = m_modelInverse * point;
-    auto patternPoint = pattern.getTransformation() * localPoint;
-    return pattern.colorAt(patternPoint);
+    auto patternPoint = pattern->getTransformation() * localPoint;
+    return pattern->colorAt(patternPoint);
 }
 

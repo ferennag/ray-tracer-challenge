@@ -9,16 +9,14 @@
 class Pattern {
 public:
     Pattern() = default;
-    Pattern(const Color &c1, const Color &c2);
     virtual ~Pattern() = default;
 
-    virtual Color colorAt(const glm::vec3 &point) const;
+    virtual Color colorAt(const glm::vec3 &point) const = 0;
 
     Pattern &withTransformation(const glm::dmat4 &transform);
-    glm::dmat4 getTransformation() const;
+    [[nodiscard]] glm::dmat4 getTransformation() const;
 
 protected:
-    Color m_first { Color::black() }, m_second { Color::white() };
     glm::dmat4 m_transform { glm::identity<glm::dmat4>() };
 };
 

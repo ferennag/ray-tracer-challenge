@@ -77,7 +77,7 @@ Color RayTracerRenderer::colorAt(const Ray &ray) const {
 
 Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, const glm::dvec4 &eye,
                                   const glm::dvec4 &point) const {
-    auto material = shape.getMaterial();
+    auto &material = shape.getMaterial();
     auto normal = shape.getNormalAt(point);
     auto overPoint = point + normal * PRECISION;
     if (isShadowed(overPoint, normal)) {

@@ -22,7 +22,7 @@ public:
     Shape &withTransformation(const glm::dmat4 &transformation);
     Shape &withMaterial(const Material &material);
 
-    [[nodiscard]] Material getMaterial() const { return m_material; }
+    [[nodiscard]] const Material &getMaterial() const { return m_material; }
 
 protected:
     Material m_material;
