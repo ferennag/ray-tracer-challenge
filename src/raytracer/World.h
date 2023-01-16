@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <vector>
-#include "PointLight.h"
+#include "lighting/PointLight.h"
 #include "shapes/Shape.h"
 #include "Camera.h"
 

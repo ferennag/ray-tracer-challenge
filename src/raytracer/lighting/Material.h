@@ -2,7 +2,7 @@
 #define RAY_TRACER_CHALLENGE_MATERIAL_H
 
 #include <glm/glm.hpp>
-#include "../engine/Color.h"
+#include "../../engine/Color.h"
 
 //http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
 struct Material {

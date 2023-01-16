@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Ray.h"
 #include "../Intersections.h"
-#include "../Material.h"
+#include "../lighting/Material.h"
 
 class Shape {
 public:

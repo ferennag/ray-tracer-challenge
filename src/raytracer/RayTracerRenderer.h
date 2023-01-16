@@ -4,8 +4,8 @@
 #include <future>
 #include <glm/glm.hpp>
 #include "../engine/Renderer.h"
-#include "PointLight.h"
-#include "Material.h"
+#include "lighting/PointLight.h"
+#include "lighting/Material.h"
 #include "shapes/Sphere.h"
 #include "World.h"
 

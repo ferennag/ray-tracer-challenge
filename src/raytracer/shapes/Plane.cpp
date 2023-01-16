@@ -1,5 +1,5 @@
 #include "Plane.h"
-#include "../RayMath.h"
+#include "../util/RayMath.h"
 
 static double absd(double x) {
     return x < 0 ? -x : x;

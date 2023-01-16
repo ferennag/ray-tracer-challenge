@@ -6,7 +6,7 @@
 #include "../Ray.h"
 #include "../Intersections.h"
 #include "../../engine/Color.h"
-#include "../Material.h"
+#include "../lighting/Material.h"
 #include "Shape.h"
 
 class Sphere: public Shape {

@@ -3,7 +3,7 @@
 #include "World.h"
 #include "shapes/Sphere.h"
 #include "Transformations.h"
-#include "RayMath.h"
+#include "util/RayMath.h"
 #include "shapes/Plane.h"
 
 World::World(int width, int height) {
