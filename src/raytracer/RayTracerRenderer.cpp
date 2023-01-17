@@ -69,7 +69,7 @@ Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
 
         auto reflection = reflectedColor(computations, remaining);
         auto refraction = refractedColor(computations, remaining);
-        return finalColor + reflection;// + refraction;
+        return finalColor + reflection + refraction;
     } else {
         return { 0, 0, 0, 1 };
     }
