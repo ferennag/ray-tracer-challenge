@@ -17,7 +17,7 @@ public:
     [[nodiscard]] glm::dmat4 getViewMatrix() const;
     [[nodiscard]] glm::dmat4 getInverseViewMatrix() const;
 private:
-    glm::dvec4 m_position { 0, 2, -3, 1 };
+    glm::dvec4 m_position { 0, 1, -4, 1 };
     glm::dvec4 m_target { 0, 0, 0, 1 };
     double m_halfW { 0 }, m_halfH { 0 };
     double m_pixelSize { 0 };

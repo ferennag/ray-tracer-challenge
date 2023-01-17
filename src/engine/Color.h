@@ -34,6 +34,12 @@ public:
         return Color(1, 1, 1, 1);
     }
 
+    double r() const { return m_red; }
+
+    double g() const { return m_green; }
+
+    double b() const { return m_blue; }
+
 private:
     double m_red { 0 }, m_green { 0 }, m_blue { 0 }, m_alpha { 1 };
 

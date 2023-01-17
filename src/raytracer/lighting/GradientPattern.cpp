@@ -10,7 +10,7 @@ GradientPattern::GradientPattern(const GradientPattern &other): Pattern(other) {
     m_second = other.m_second;
 }
 
-Color GradientPattern::colorAt(const glm::vec3 &point) const {
+Color GradientPattern::colorAt(const glm::dvec3 &point) const {
     auto distance = m_second - m_first;
     auto fraction = point.x - floor(point.x);
     return m_first + distance * fraction;

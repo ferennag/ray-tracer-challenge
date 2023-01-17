@@ -12,9 +12,11 @@ public:
     Intersections() = default;
     void addIntersection(const Shape *object, double distance);
     void addIntersections(const Intersections &other);
-    [[nodiscard]] std::optional<Intersection> hit();
+    [[nodiscard]] std::optional<Intersection> hit() const;
+
+    std::vector<Intersection> &getList() const;
 private:
-    std::vector<Intersection> m_intersections;
+    mutable std::vector<Intersection> m_intersections;
 
     void sort();
 };

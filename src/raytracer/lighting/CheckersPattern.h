@@ -9,7 +9,7 @@ public:
     CheckersPattern(const Color &first, const Color &second);
     ~CheckersPattern() override = default;
 
-    [[nodiscard]] Color colorAt(const glm::vec3 &point) const override;
+    [[nodiscard]] Color colorAt(const glm::dvec3 &point) const override;
 private:
     Color m_first { Color::black() }, m_second { Color::white() };
 };

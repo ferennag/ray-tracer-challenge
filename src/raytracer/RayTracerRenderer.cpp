@@ -1,11 +1,10 @@
-#include <iostream>
+#include <algorithm>
 #include <thread>
 #include <future>
 #include <glm/gtc/matrix_transform.hpp>
 #include "RayTracerRenderer.h"
 #include "Ray.h"
 #include "shapes/Sphere.h"
-#include "../engine/util/RayMath.h"
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
 }
@@ -57,45 +56,43 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
 
 
 Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
-    auto eye = -ray.getDirection();
     auto intersections = m_world.intersect(ray);
     auto hit = intersections.hit();
 
     if (hit.has_value()) {
-        auto intersection = hit.value();
-        auto point = ray.at(intersection.distance);
-        auto overPoint = point + intersection.object->getNormalAt(point) * PRECISION;
+        auto computations = prepareComputations(intersections, ray);
+
         Color finalColor { 0, 0, 0, 1 };
-        Color reflection = reflectedColor(*intersection.object, ray, overPoint, remaining);
         for (auto &light: m_world.getLights()) {
-            finalColor += lighting(*intersection.object, light, eye, overPoint);
+            finalColor += lighting(light, computations);
         }
-        return finalColor + reflection;
+
+        auto reflection = reflectedColor(computations, remaining);
+        auto refraction = refractedColor(computations, remaining);
+        return finalColor + reflection;// + refraction;
     } else {
         return { 0, 0, 0, 1 };
     }
 }
 
-Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, const glm::dvec4 &eye,
-                                  const glm::dvec4 &point) const {
-    auto &material = shape.getMaterial();
-    auto normal = shape.getNormalAt(point);
-    if (isShadowed(point, normal)) {
+Color RayTracerRenderer::lighting(const PointLight &light, const Computations &comps) const {
+    auto &material = comps.object->getMaterial();
+    if (isShadowed(comps.overPoint)) {
         return { 0.0, 0.0, 0.0, 1.0 };
     }
 
-    auto effectiveColor = shape.getColorAt(point) * light.getIntensity();
-    auto lightDir = glm::normalize(light.getPosition() - point);
+    auto effectiveColor = comps.object->getColorAt(comps.point) * light.getIntensity();
+    auto lightDir = glm::normalize(light.getPosition() - comps.point);
     auto ambient = effectiveColor * material.ambient;
-    auto lightNormalAngle = glm::dot(lightDir, normal);
+    auto lightNormalAngle = glm::dot(lightDir, comps.normal);
 
     if (lightNormalAngle < 0) {
-        return ambient + Color(0, 0, 0, 1) + Color(0, 0, 0, 1);
+        return ambient;
     }
 
     auto diffuse = effectiveColor * material.diffuse * lightNormalAngle;
-    auto reflectDir = glm::reflect(-lightDir, normal);
-    auto reflectEyeAngle = glm::dot(reflectDir, eye);
+    auto reflectDir = glm::reflect(-lightDir, comps.normal);
+    auto reflectEyeAngle = glm::dot(reflectDir, comps.eye);
 
     auto factor = glm::pow(reflectEyeAngle, material.shininess);
     auto specular = light.getIntensity() * material.specular * factor;
@@ -103,15 +100,38 @@ Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, c
     return ambient + diffuse + specular;
 }
 
-Color RayTracerRenderer::reflectedColor(const Shape &shape, const Ray &ray, const glm::dvec4 &point, const int remaining) const {
-    if (absd(shape.getMaterial().reflectivity) < PRECISION || remaining <= 0) {
+Color RayTracerRenderer::reflectedColor(const Computations &comps, const int remaining) const {
+    auto material = comps.object->getMaterial();
+    if (absd(material.reflectivity) < PRECISION || remaining <= 0) {
         return Color::black();
     }
 
-    auto reflectVector = glm::reflect(ray.getDirection(), shape.getNormalAt(point));
-    auto reflectRay = Ray(point, reflectVector);
+    auto reflectRay = Ray(comps.overPoint, comps.reflect);
     auto color = colorAt(reflectRay, remaining - 1);
-    return color * shape.getMaterial().reflectivity;
+    return color * material.reflectivity;
+}
+
+Color RayTracerRenderer::refractedColor(const Computations &comps, const int remaining) const {
+    auto material = comps.object->getMaterial();
+    if (absd(material.transparency) < PRECISION || remaining <= 0) {
+        return Color::black();
+    }
+
+    auto normal = comps.normal;
+    auto nRatio = comps.n1 / comps.n2;
+    auto cosI = glm::dot(comps.eye, normal);
+    auto sin2T = pow(nRatio, 2) * (1 - pow(cosI, 2));
+
+    // Total internal refraction
+    if (sin2T > 1.0) {
+        return Color::black();
+    }
+
+    auto cosT = sqrt(1.0 - sin2T);
+    auto direction = normal * (nRatio * cosI - cosT) - comps.eye * nRatio;
+    auto refractRay = Ray(comps.underPoint, direction);
+    auto color = colorAt(refractRay, remaining - 1) * material.transparency;
+    return color;
 }
 
 Ray RayTracerRenderer::rayForPixel(int x, int y) const {
@@ -127,10 +147,10 @@ Ray RayTracerRenderer::rayForPixel(int x, int y) const {
     auto origin = viewInverse * glm::dvec4(0, 0, 0, 1);
     auto direction = glm::normalize(pixel - origin);
 
-    return Ray(origin, direction);
+    return {origin, direction};
 }
 
-bool RayTracerRenderer::isShadowed(const glm::dvec4 &point, const glm::dvec4 &normal) const {
+bool RayTracerRenderer::isShadowed(const glm::dvec4 &point) const {
     for (auto &light: m_world.getLights()) {
         auto v = light.getPosition() - point;
         auto distance = glm::length(v);
@@ -146,3 +166,4 @@ bool RayTracerRenderer::isShadowed(const glm::dvec4 &point, const glm::dvec4 &no
     }
     return false;
 }
+

@@ -11,7 +11,7 @@ public:
     Pattern() = default;
     virtual ~Pattern() = default;
 
-    virtual Color colorAt(const glm::vec3 &point) const = 0;
+    virtual Color colorAt(const glm::dvec3 &point) const = 0;
 
     Pattern &withTransformation(const glm::dmat4 &transform);
     [[nodiscard]] glm::dmat4 getTransformation() const;

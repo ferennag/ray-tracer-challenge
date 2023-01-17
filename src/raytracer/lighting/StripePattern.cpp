@@ -10,6 +10,6 @@ StripePattern::StripePattern(const StripePattern &other): Pattern(other) {
     m_second = other.m_second;
 }
 
-Color StripePattern::colorAt(const glm::vec3 &point) const {
+Color StripePattern::colorAt(const glm::dvec3 &point) const {
     return static_cast<int>(floor(point.x)) % 2 == 0 ? m_first : m_second;
 }
