@@ -3,8 +3,9 @@
 #include "World.h"
 #include "shapes/Sphere.h"
 #include "Transformations.h"
-#include "util/RayMath.h"
+#include "../engine/util/RayMath.h"
 #include "shapes/Plane.h"
+#include "lighting/GradientPattern.h"
 
 World::World(int width, int height) {
     m_camera = Camera(width, height, PI / 2);
@@ -21,8 +22,7 @@ World::World(int width, int height) {
     m_objects.push_back(std::move(sphere1));
 
     auto sphere2 = std::make_unique<Sphere>();
-    auto pattern2 = std::make_shared<StripePattern>(Color { 0.2, 0.9, 0.3, 1.0 }, Color { 0.9, 0.9, 0.9, 1.0 });
-    pattern2->withTransformation(Transformations::scale(5, 5, 5));
+    auto pattern2 = std::make_shared<GradientPattern>(Color { 1, 0, 0 }, Color { 0, 0, 1 });
     sphere2->withTransformation(
             Transformations::translate(-1, 0.5, 0.0)
             * Transformations::scale(0.5, 0.5, 0.5)

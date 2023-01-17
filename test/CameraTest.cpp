@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "../src/raytracer/Camera.h"
-#include "../src/raytracer/util/RayMath.h"
+#include "../src/engine/util/RayMath.h"
 
 TEST(Camera, pixelSizeHorizontal) {
     auto camera = Camera(200, 125, PI / 2);

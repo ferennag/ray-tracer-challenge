@@ -1,13 +1,14 @@
 #include <cmath>
 #include "Color.h"
+#include "./util/RayMath.h"
 
 
 static double min(double a, double b) {
-    return a < b ? a: b;
+    return a < b ? a : b;
 }
 
 static double max(double a, double b) {
-    return a > b ? a: b;
+    return a > b ? a : b;
 }
 
 
@@ -43,12 +44,12 @@ void Color::copy(const Color &color) {
 }
 
 Color Color::operator*(double intensity) const {
-    Color result;
-    result.copy(*this);
-    result.m_red *= intensity;
-    result.m_green *= intensity;
-    result.m_blue *= intensity;
-    return result;
+    return {
+            m_red * intensity,
+            m_green * intensity,
+            m_blue * intensity,
+            m_alpha,
+    };
 }
 
 std::array<uint8_t, 4> Color::toRGB() const {
@@ -78,23 +79,23 @@ void Color::setRGBA(double r, double g, double b, double a) {
 
 Color Color::operator+(const Color &other) const {
     return {
-        m_red + other.m_red,
-        m_green + other.m_green,
-        m_blue + other.m_blue,
-        m_alpha,
+            m_red + other.m_red,
+            m_green + other.m_green,
+            m_blue + other.m_blue,
+            m_alpha,
     };
 }
 
 Color Color::operator+(const double value) const {
     return {
-        m_red + value,
-        m_green + value,
-        m_blue + value,
-        m_alpha
+            m_red + value,
+            m_green + value,
+            m_blue + value,
+            m_alpha
     };
 }
 
-Color &Color::operator*=(const Color& rhs) {
+Color &Color::operator*=(const Color &rhs) {
     m_red *= rhs.m_red;
     m_green *= rhs.m_green;
     m_blue *= rhs.m_blue;
@@ -108,3 +109,18 @@ Color &Color::operator+=(const Color &rhs) {
     return *this;
 }
 
+Color Color::operator-(const Color &other) const {
+    return {
+            m_red - other.m_red,
+            m_green - other.m_green,
+            m_blue - other.m_blue,
+            m_alpha
+    };
+}
+
+bool Color::operator==(const Color &rhs) const {
+    return std::fabs(m_red - rhs.m_red) < PRECISION
+           && std::fabs(m_green - rhs.m_green) < PRECISION
+           && std::fabs(m_blue - rhs.m_blue) < PRECISION
+           && std::fabs(m_alpha - rhs.m_alpha) < PRECISION;
+}

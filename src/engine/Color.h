@@ -8,7 +8,7 @@
 class Color {
 public:
     Color();
-    Color(double r, double g, double b, double a);
+    Color(double r, double g, double b, double a = 1.0);
     explicit Color(const glm::dvec4 &v);
 
     void setRGB(double r, double g, double b);
@@ -22,6 +22,9 @@ public:
     Color operator+(const Color &other) const;
     Color &operator+=(const Color &rhs);
     Color operator+(const double value) const;
+    Color operator-(const Color &other) const;
+
+    bool operator==(const Color &rhs) const;
 
     static Color black() {
         return Color(0, 0, 0, 1);

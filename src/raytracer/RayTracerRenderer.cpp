@@ -4,8 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "RayTracerRenderer.h"
 #include "Ray.h"
-#include "util/RayMath.h"
 #include "shapes/Sphere.h"
+#include "../engine/util/RayMath.h"
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
 }

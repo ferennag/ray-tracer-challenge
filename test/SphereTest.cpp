@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../src/raytracer/shapes/Sphere.h"
 #include "../src/raytracer/Transformations.h"
-#include "../src/raytracer/util/RayMath.h"
+#include "../src/engine/util/RayMath.h"
 
 TEST(SphereTest, normalAtWithTranslation) {
     Sphere s;

@@ -1,9 +1,5 @@
 #include "Plane.h"
-#include "../util/RayMath.h"
-
-static double absd(double x) {
-    return x < 0 ? -x : x;
-}
+#include "../../engine/util/RayMath.h"
 
 Intersections Plane::localIntersect(const Ray &ray) const {
     Intersections result;
