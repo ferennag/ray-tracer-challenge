@@ -81,8 +81,8 @@ Color RayTracerRenderer::lighting(const PointLight &light, const Computations &c
         return { 0.0, 0.0, 0.0, 1.0 };
     }
 
-    auto effectiveColor = comps.object->getColorAt(comps.point) * light.getIntensity();
-    auto lightDir = glm::normalize(light.getPosition() - comps.point);
+    auto effectiveColor = comps.object->getColorAt(comps.overPoint) * light.getIntensity();
+    auto lightDir = glm::normalize(light.getPosition() - comps.overPoint);
     auto ambient = effectiveColor * material.ambient;
     auto lightNormalAngle = glm::dot(lightDir, comps.normal);
 
