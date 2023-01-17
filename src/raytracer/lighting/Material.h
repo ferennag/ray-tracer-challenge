@@ -14,6 +14,7 @@ struct Material {
     double diffuse { 0.9 };
     double specular { 0.7 };
     double shininess { 120 };
+    double reflectivity { 0.0 };
     std::shared_ptr<Pattern> pattern { nullptr };
 };
 #endif //RAY_TRACER_CHALLENGE_MATERIAL_H

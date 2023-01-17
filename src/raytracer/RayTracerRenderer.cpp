@@ -45,7 +45,7 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
     for (int y = minY; y < maxY; ++y) {
         for (int x = minX; x < maxX; ++x) {
             auto ray = rayForPixel(x, y);
-            auto color = colorAt(ray);
+            auto color = colorAt(ray, reflectionDepthLimit);
             // We are not changing the content of the vector (only the values in the objects stored in the vector),
             // so this is considered a reading operation from the vector's perspective.
             // Thus, this operation is thread safe, no need for mutex.
@@ -56,7 +56,7 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
 }
 
 
-Color RayTracerRenderer::colorAt(const Ray &ray) const {
+Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
     auto eye = -ray.getDirection();
     auto intersections = m_world.intersect(ray);
     auto hit = intersections.hit();
@@ -64,28 +64,28 @@ Color RayTracerRenderer::colorAt(const Ray &ray) const {
     if (hit.has_value()) {
         auto intersection = hit.value();
         auto point = ray.at(intersection.distance);
+        auto overPoint = point + intersection.object->getNormalAt(point) * PRECISION;
         Color finalColor { 0, 0, 0, 1 };
+        Color reflection = reflectedColor(*intersection.object, ray, overPoint, remaining);
         for (auto &light: m_world.getLights()) {
-            finalColor += lighting(*intersection.object, light, eye, point);
+            finalColor += lighting(*intersection.object, light, eye, overPoint);
         }
-        return finalColor;
+        return finalColor + reflection;
     } else {
         return { 0, 0, 0, 1 };
     }
 }
 
-
 Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, const glm::dvec4 &eye,
                                   const glm::dvec4 &point) const {
     auto &material = shape.getMaterial();
     auto normal = shape.getNormalAt(point);
-    auto overPoint = point + normal * PRECISION;
-    if (isShadowed(overPoint, normal)) {
+    if (isShadowed(point, normal)) {
         return { 0.0, 0.0, 0.0, 1.0 };
     }
 
     auto effectiveColor = shape.getColorAt(point) * light.getIntensity();
-    auto lightDir = glm::normalize(light.getPosition() - overPoint);
+    auto lightDir = glm::normalize(light.getPosition() - point);
     auto ambient = effectiveColor * material.ambient;
     auto lightNormalAngle = glm::dot(lightDir, normal);
 
@@ -101,6 +101,17 @@ Color RayTracerRenderer::lighting(const Shape &shape, const PointLight &light, c
     auto specular = light.getIntensity() * material.specular * factor;
 
     return ambient + diffuse + specular;
+}
+
+Color RayTracerRenderer::reflectedColor(const Shape &shape, const Ray &ray, const glm::dvec4 &point, const int remaining) const {
+    if (absd(shape.getMaterial().reflectivity) < PRECISION || remaining <= 0) {
+        return Color::black();
+    }
+
+    auto reflectVector = glm::reflect(ray.getDirection(), shape.getNormalAt(point));
+    auto reflectRay = Ray(point, reflectVector);
+    auto color = colorAt(reflectRay, remaining - 1);
+    return color * shape.getMaterial().reflectivity;
 }
 
 Ray RayTracerRenderer::rayForPixel(int x, int y) const {
