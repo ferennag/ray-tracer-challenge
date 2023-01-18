@@ -6,15 +6,15 @@
 class PointLight {
 public:
     PointLight() = default;
-    PointLight(const glm::dvec4 &position, double intensity = 1.0f);
+    PointLight(const glm::dvec3 &position, const glm::dvec3 &intensity = {1.0, 1.0, 1.0});
 
-    double getIntensity() const { return m_intensity; }
+    glm::dvec3 getIntensity() const { return m_intensity; }
 
     glm::dvec4 getPosition() const { return m_position; }
 
 private:
     glm::dvec4 m_position { 0 };
-    double m_intensity { 1 };
+    glm::dvec3 m_intensity { 1 };
 };
 
 

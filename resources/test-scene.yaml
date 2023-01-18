@@ -1,0 +1,50 @@
+- add: camera
+  width: 1000
+  height: 1000
+  field-of-view: 1.0471975511965977461542144610932
+  from: [ 0, 3, -10 ]
+  to: [ 0, 0, 0 ]
+  up: [ 0, 1, 0 ]
+
+
+- add: light
+  at: [ -8, 10, -8 ]
+  intensity: [ 1, 1, 1 ]
+
+# FLOOR - a plane
+- add: plane
+  material:
+    pattern:
+      type: checker
+      colors:
+        - [0.15, 0.15, 0.15]
+        - [0.95, 0.95, 0.95]
+      transform:
+        - [ scale, 0.70, 0.70, 0.70 ]
+    ambient: 0.7
+
+# GLASS SPHERE
+- add: sphere
+  material:
+    color: [ 0.3, 0.3, 0.3 ]
+    refractive-index: 1.52
+    reflective: 0.5
+    transparency: 1.0
+    diffuse: 0.8
+    specular: 0.1
+  transform:
+    - [ scale, 1.0, 1.0, 1.0 ]
+    - [ translate, 0.0, 4.0, 0 ]
+
+# AIR SPHERE
+- add: sphere
+  material:
+    color: [ 0.3, 0.3, 0.3 ]
+    refractive-index: 1.00029
+    reflective: 0.5
+    transparency: 1.0
+    diffuse: 0.8
+    specular: 0.1
+  transform:
+    - [ scale, 0.5, 0.5, 0.5 ]
+    - [ translate, 0.0, 4.0, 0 ]

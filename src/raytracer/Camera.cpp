@@ -2,6 +2,8 @@
 #include "Camera.h"
 
 Camera::Camera(int w, int h, double fov) {
+    m_w = w;
+    m_h = h;
     double halfView = tanf(fov / 2.0f);
     double aspect = static_cast<double>(w) / static_cast<double>(h);
     if (aspect >= 1) {
@@ -52,6 +54,14 @@ double Camera::getHalfWidth() const {
 
 double Camera::getHalfHeight() const {
     return m_halfH;
+}
+
+int Camera::getWidth() const {
+    return m_w;
+}
+
+int Camera::getHeight() const {
+    return m_h;
 }
 
 void Camera::computeViewMatrices() const {

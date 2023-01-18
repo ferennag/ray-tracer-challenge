@@ -8,7 +8,7 @@
 #include "shapes/Sphere.h"
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height) {
-    m_world = std::make_unique<World>(width, height);
+    m_world = std::make_unique<World>();
 }
 
 void RayTracerRenderer::render() {

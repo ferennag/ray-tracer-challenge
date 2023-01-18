@@ -18,6 +18,10 @@ Color::Color(double r, double g, double b, double a) {
     setRGBA(r, g, b, a);
 }
 
+Color::Color(const glm::dvec3 &v) {
+    setRGBA(v.x, v.y, v.z, 1.0);
+}
+
 Color::Color(const glm::dvec4 &v) {
     setRGBA(v.x, v.y, v.z, v.w);
 }
@@ -42,11 +46,20 @@ void Color::copy(const Color &color) {
     m_alpha = color.m_alpha;
 }
 
-Color Color::operator*(double intensity) const {
+Color Color::operator*(const double intensity) const {
     return {
             m_red * intensity,
             m_green * intensity,
             m_blue * intensity,
+            m_alpha,
+    };
+}
+
+Color Color::operator*(const glm::vec3 &intensity) const {
+    return {
+            m_red * intensity.x,
+            m_green * intensity.y,
+            m_blue * intensity.z,
             m_alpha,
     };
 }
@@ -90,6 +103,15 @@ Color Color::operator+(const double value) const {
             m_red + value,
             m_green + value,
             m_blue + value,
+            m_alpha
+    };
+}
+
+Color Color::operator+(const glm::vec3 &value) const {
+    return {
+            m_red + value.x,
+            m_green + value.y,
+            m_blue + value.z,
             m_alpha
     };
 }

@@ -14,12 +14,16 @@ public:
     [[nodiscard]] double getHalfWidth() const;
     [[nodiscard]] double getHalfHeight() const;
 
+    [[nodiscard]] int getWidth() const;
+    [[nodiscard]] int getHeight() const;
+
     [[nodiscard]] glm::dmat4 getViewMatrix() const;
     [[nodiscard]] glm::dmat4 getInverseViewMatrix() const;
 private:
     glm::dvec4 m_position { 0, 1, -4, 1 };
     glm::dvec4 m_target { 0, 0, 0, 1 };
     double m_halfW { 0 }, m_halfH { 0 };
+    int m_w { 0 }, m_h { 0 };
     double m_pixelSize { 0 };
 
     mutable bool m_dirty { false };
