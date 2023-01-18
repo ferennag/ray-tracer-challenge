@@ -10,7 +10,7 @@
 
 class World {
 public:
-    World(int width = 1000, int height = 1000);
+    World() = default;
 
     Intersections intersect(const Ray &ray) const;
     std::vector<PointLight> getLights() const;
@@ -23,8 +23,6 @@ public:
     void addLight(const PointLight &light) { m_lights.push_back(light); }
 
     void setCamera(const Camera &camera) { m_camera = camera; }
-
-    static std::unique_ptr<World> defaultWorld(int width = 1000, int height = 1000);
 
 private:
     std::vector<std::unique_ptr<Shape>> m_objects;

@@ -1,0 +1,24 @@
+#
+# This is the default world used in the unit tests
+#
+- add: camera
+  width: 300
+  height: 300
+  field-of-view: 1.0471975511965977461542144610932
+  from: [ 0, 0, -1 ]
+  to: [ 0, 0, 0 ]
+  up: [ 0, 1, 0 ]
+
+- add: light
+  at: [ -10, 10, -10 ]
+  intensity: [ 1, 1, 1 ]
+
+- add: sphere
+  material:
+    color: [ 0.8, 1.0, 0.6 ]
+    diffuse: 0.7
+    specular: 0.2
+
+- add: sphere
+  transform:
+    - [ scale, 0.5, 0.5, 0.5 ]

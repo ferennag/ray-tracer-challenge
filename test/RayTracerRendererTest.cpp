@@ -2,32 +2,33 @@
 #include "../src/raytracer/RayTracerRenderer.h"
 #include "../src/raytracer/Transformations.h"
 #include "../src/raytracer/shapes/Plane.h"
+#include "../src/raytracer/SceneLoader.h"
 #include "TestPattern.h"
 
 TEST(RayTracerRenderer, isShadowed_noShadow) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
     glm::dvec4 point = {0, 10, 0, 1};
     EXPECT_FALSE(renderer.isShadowed(point));
 }
 
 TEST(RayTracerRenderer, isShadowed_shadow) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
     glm::dvec4 point = {10, -10, 10, 1};
     EXPECT_TRUE(renderer.isShadowed(point));
 }
 
 TEST(RayTracerRenderer, isShadowed_objectBehindLight) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
     glm::dvec4 point = {-20, 20, -20, 1};
     EXPECT_FALSE(renderer.isShadowed(point));
 }
 
 TEST(RayTracerRenderer, isShadowed_objectBehindPoint) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
     glm::dvec4 point = {-2, 2, -2, 1};
     EXPECT_FALSE(renderer.isShadowed(point));
 }
@@ -47,7 +48,7 @@ TEST(RayTracerRenderer, strike_NonReflective) {
 
 TEST(RayTracerRenderer, strike_Reflective) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    auto world = std::move(World::defaultWorld());
+    auto world = SceneLoader::loadDefaultScene();
 
     auto ray = Ray({ 0, 0, -3 }, { 0, -sqrt(2.0) / 2.0, sqrt(2.0) / 2.0 });
     auto shape = std::make_unique<Plane>();
@@ -68,7 +69,7 @@ TEST(RayTracerRenderer, strike_Reflective) {
 
 TEST(RayTracerRenderer, refractedColor_opaque) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
     auto ray = Ray({ 0, 0, -5 }, { 0, 0, 1 });
     auto &object = renderer.getWorld().getObjects().at(0);
 
@@ -85,7 +86,7 @@ TEST(RayTracerRenderer, refractedColor_opaque) {
 
 TEST(RayTracerRenderer, refractedColor_RefractedColor) {
     auto renderer = RayTracerRenderer(1000, 1000);
-    renderer.setWorld(std::move(World::defaultWorld()));
+    renderer.setWorld(SceneLoader::loadDefaultScene());
 
     auto &object1 = renderer.getWorld().getObjects().at(0);
     auto &material1 = const_cast<Material &>(object1->getMaterial());

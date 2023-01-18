@@ -1,18 +1,17 @@
 #include <yaml-cpp/yaml.h>
-#include "SceneParser.h"
+#include "SceneLoader.h"
 #include "shapes/Plane.h"
 #include "shapes/Sphere.h"
 #include "Transformations.h"
 #include "lighting/patterns/CheckersPattern.h"
 #include "lighting/patterns/GradientPattern.h"
 
-glm::dvec3 SceneParser::parseVector(const YAML::Node &node) {
+glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
     return result;
 }
 
-
-glm::dmat4 SceneParser::parseTransformations(const YAML::Node &node) {
+glm::dmat4 SceneLoader::parseTransformations(const YAML::Node &node) {
     auto result = glm::identity<glm::dmat4>();
 
     if (!node) {
@@ -48,7 +47,7 @@ glm::dmat4 SceneParser::parseTransformations(const YAML::Node &node) {
     return result;
 }
 
-std::unique_ptr<Pattern> SceneParser::parsePattern(const YAML::Node &node) {
+std::unique_ptr<Pattern> SceneLoader::parsePattern(const YAML::Node &node) {
     if (!node) {
         return nullptr;
     }
@@ -58,7 +57,7 @@ std::unique_ptr<Pattern> SceneParser::parsePattern(const YAML::Node &node) {
     auto type = node["type"].as<std::string>();
     auto color1 = Color(parseVector(node["colors"][0]));
     auto color2 = Color(parseVector(node["colors"][1]));
-    auto transform = SceneParser::parseTransformations(node["transform"]);
+    auto transform = SceneLoader::parseTransformations(node["transform"]);
 
     if (type == "checker") {
         result = std::make_unique<CheckersPattern>(color1, color2);
@@ -74,7 +73,7 @@ std::unique_ptr<Pattern> SceneParser::parsePattern(const YAML::Node &node) {
     return result;
 }
 
-Material SceneParser::parseMaterial(const YAML::Node &node) {
+Material SceneLoader::parseMaterial(const YAML::Node &node) {
     Material material;
 
     if (!node) {
@@ -82,7 +81,7 @@ Material SceneParser::parseMaterial(const YAML::Node &node) {
     }
 
     if (node["color"]) {
-        glm::dvec3 color = SceneParser::parseVector(node["color"]);
+        glm::dvec3 color = SceneLoader::parseVector(node["color"]);
         material.color = Color(color.x, color.y, color.z);
     }
 
@@ -115,15 +114,17 @@ Material SceneParser::parseMaterial(const YAML::Node &node) {
     }
 
     if (node["pattern"]) {
-        material.pattern = std::move(SceneParser::parsePattern(node["pattern"]));
+        material.pattern = std::move(SceneLoader::parsePattern(node["pattern"]));
     }
 
     return material;
 }
 
+std::unique_ptr<World> SceneLoader::loadDefaultScene() {
+    return loadScene("../resources/default-scene.yaml");
+}
 
-
-std::unique_ptr<World> SceneParser::loadScene(std::string_view path) {
+std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
     auto world = std::make_unique<World>();
     YAML::Node scene = YAML::LoadFile(path.data());
 
@@ -135,26 +136,26 @@ std::unique_ptr<World> SceneParser::loadScene(std::string_view path) {
             auto width = node["width"].as<int>();
             auto height = node["height"].as<int>();
             auto fov = node["field-of-view"].as<double>();
-            glm::dvec3 position = SceneParser::parseVector(node["from"]);
-            glm::dvec3 target = SceneParser::parseVector(node["to"]);
+            glm::dvec3 position = SceneLoader::parseVector(node["from"]);
+            glm::dvec3 target = SceneLoader::parseVector(node["to"]);
             auto camera = Camera(width, height, fov);
             camera.setPosition(position);
             camera.setTarget(target);
             world->setCamera(camera);
         } else if (type == "light") {
-            glm::dvec3 position = SceneParser::parseVector(node["at"]);
-            glm::dvec3 intensity = SceneParser::parseVector(node["intensity"]);
+            glm::dvec3 position = SceneLoader::parseVector(node["at"]);
+            glm::dvec3 intensity = SceneLoader::parseVector(node["intensity"]);
             auto light = PointLight(position, intensity);
             world->addLight(light);
         } else if (type == "plane") {
             auto plane = std::make_unique<Plane>();
-            plane->withMaterial(SceneParser::parseMaterial(node["material"]));
-            plane->withTransformation(SceneParser::parseTransformations(node["transform"]));
+            plane->withMaterial(SceneLoader::parseMaterial(node["material"]));
+            plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
             world->addObject(std::move(plane));
         } else if (type == "sphere") {
             auto sphere = std::make_unique<Sphere>();
-            sphere->withMaterial(SceneParser::parseMaterial(node["material"]));
-            sphere->withTransformation(SceneParser::parseTransformations(node["transform"]));
+            sphere->withMaterial(SceneLoader::parseMaterial(node["material"]));
+            sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
             world->addObject(std::move(sphere));
         }
     }
