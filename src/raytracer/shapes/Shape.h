@@ -10,7 +10,7 @@
 
 class Shape {
 public:
-    Shape() = default;
+    Shape();
     virtual ~Shape() = default;
 
     [[nodiscard]] virtual Intersections intersect(const Ray &ray) const;

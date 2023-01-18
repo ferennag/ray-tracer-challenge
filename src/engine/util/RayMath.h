@@ -11,4 +11,8 @@ static double absd(double a) {
     return a < 0 ? -a : a;
 }
 
+static bool doubleEq(double a, double b) {
+    return absd(a - b) < PRECISION;
+}
+
 #endif //RAY_TRACER_CHALLENGE_RAYMATH_H

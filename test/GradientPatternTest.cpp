@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/raytracer/lighting/GradientPattern.h"
+#include "../src/raytracer/lighting/patterns/GradientPattern.h"
 
 TEST(GradientPattern, linerlyInterpolates) {
     auto pattern = GradientPattern(Color::white(), Color::black());

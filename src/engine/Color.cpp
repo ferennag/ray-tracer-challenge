@@ -22,7 +22,6 @@ Color::Color(const glm::dvec4 &v) {
     setRGBA(v.x, v.y, v.z, v.w);
 }
 
-
 void Color::setRGB(double r, double g, double b) {
     setRGBA(r, g, b, m_alpha);
 }
@@ -54,10 +53,10 @@ Color Color::operator*(double intensity) const {
 
 std::array<uint8_t, 4> Color::toRGB() const {
     return {
-            static_cast<uint8_t>(min(round(m_red * 255), 255)),
-            static_cast<uint8_t>(min(round(m_green * 255), 255)),
-            static_cast<uint8_t>(min(round(m_blue * 255), 255)),
-            static_cast<uint8_t>(min(round(m_alpha * 255), 255))
+            static_cast<uint8_t>(max(min(round(m_red * 255), 255), 0)),
+            static_cast<uint8_t>(max(min(round(m_green * 255), 255), 0)),
+            static_cast<uint8_t>(max(min(round(m_blue * 255), 255), 0)),
+            static_cast<uint8_t>(max(min(round(m_alpha * 255), 255), 0))
     };
 }
 

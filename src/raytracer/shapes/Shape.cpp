@@ -1,5 +1,9 @@
 #include "Shape.h"
 
+Shape::Shape() {
+    withTransformation(glm::identity<glm::dmat4>());
+}
+
 Shape &Shape::withTransformation(const glm::dmat4 &transformation) {
     m_model = transformation;
     m_modelInverse = glm::inverse(m_model);

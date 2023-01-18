@@ -16,19 +16,27 @@ public:
     ~RayTracerRenderer() override = default;
 
     void render() override;
+
+    [[nodiscard]] bool isShadowed(const glm::dvec4 &point) const;
+
     [[nodiscard]] Color reflectedColor(const Computations &comps, int remaining) const;
+
+    [[nodiscard]] Color refractedColor(const Computations &comps, int remaining) const;
+
+    [[nodiscard]] double schlick(const Computations &comps) const;
+
+    [[nodiscard]] const World &getWorld() const { return *m_world; }
+
+    [[nodiscard]] void setWorld(std::unique_ptr<World> world) { m_world = std::move(world); }
+
 protected:
     const int reflectionDepthLimit = 3;
-    World m_world;
+    std::unique_ptr<World> m_world;
 
     Ray rayForPixel(int x, int y) const;
     Color colorAt(const Ray &ray, int remaining) const;
 
     [[nodiscard]] Color lighting(const PointLight &light, const Computations &comps) const;
-
-    [[nodiscard]] Color refractedColor(const Computations &comps, int remaining) const;
-
-    [[nodiscard]] bool isShadowed(const glm::dvec4 &point) const;
 
     void renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result);
 };

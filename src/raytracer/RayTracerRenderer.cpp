@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <thread>
 #include <future>
@@ -6,7 +7,8 @@
 #include "Ray.h"
 #include "shapes/Sphere.h"
 
-RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height), m_world(width, height) {
+RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height) {
+    m_world = std::make_unique<World>(width, height);
 }
 
 void RayTracerRenderer::render() {
@@ -56,34 +58,46 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
 
 
 Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
-    auto intersections = m_world.intersect(ray);
+    auto intersections = m_world->intersect(ray);
     auto hit = intersections.hit();
 
     if (hit.has_value()) {
-        auto computations = prepareComputations(intersections, ray);
+        auto computations = prepareComputations(hit.value(), intersections, ray);
 
         Color finalColor { 0, 0, 0, 1 };
-        for (auto &light: m_world.getLights()) {
+        for (auto &light: m_world->getLights()) {
             finalColor += lighting(light, computations);
         }
 
         auto reflection = reflectedColor(computations, remaining);
         auto refraction = refractedColor(computations, remaining);
-        return finalColor + reflection + refraction;
+        auto material = computations.object->getMaterial();
+
+        if (material.reflectivity > 0 && material.transparency > 0) {
+            auto reflectance = schlick(computations);
+//            if(reflectance > 20) {
+//                std::cout << "Schlick function result: " << reflectance << std::endl;
+//                std::cout << computations.toString() << std::endl << std::endl;
+//            }
+            return finalColor + (reflection * reflectance) + (refraction * (1.0 - reflectance));
+        } else {
+            return finalColor + reflection + refraction;
+        }
     } else {
-        return { 0, 0, 0, 1 };
+        return Color::black();
     }
 }
 
 Color RayTracerRenderer::lighting(const PointLight &light, const Computations &comps) const {
     auto &material = comps.object->getMaterial();
+    auto effectiveColor = comps.object->getColorAt(comps.overPoint) * light.getIntensity();
+    auto ambient = effectiveColor * material.ambient;
+
     if (isShadowed(comps.overPoint)) {
-        return { 0.0, 0.0, 0.0, 1.0 };
+        return ambient;
     }
 
-    auto effectiveColor = comps.object->getColorAt(comps.overPoint) * light.getIntensity();
     auto lightDir = glm::normalize(light.getPosition() - comps.overPoint);
-    auto ambient = effectiveColor * material.ambient;
     auto lightNormalAngle = glm::dot(lightDir, comps.normal);
 
     if (lightNormalAngle < 0) {
@@ -107,20 +121,19 @@ Color RayTracerRenderer::reflectedColor(const Computations &comps, const int rem
     }
 
     auto reflectRay = Ray(comps.overPoint, comps.reflect);
-    auto color = colorAt(reflectRay, remaining - 1);
-    return color * material.reflectivity;
+    return colorAt(reflectRay, remaining - 1) * material.reflectivity;
 }
 
 Color RayTracerRenderer::refractedColor(const Computations &comps, const int remaining) const {
     auto material = comps.object->getMaterial();
-    if (absd(material.transparency) < PRECISION || remaining <= 0) {
+    if (doubleEq(material.transparency, 0.0) || remaining <= 0) {
         return Color::black();
     }
 
     auto normal = comps.normal;
     auto nRatio = comps.n1 / comps.n2;
     auto cosI = glm::dot(comps.eye, normal);
-    auto sin2T = pow(nRatio, 2) * (1 - pow(cosI, 2));
+    auto sin2T = pow(nRatio, 2.0) * (1.0 - pow(cosI, 2.0));
 
     // Total internal refraction
     if (sin2T > 1.0) {
@@ -130,12 +143,11 @@ Color RayTracerRenderer::refractedColor(const Computations &comps, const int rem
     auto cosT = sqrt(1.0 - sin2T);
     auto direction = normal * (nRatio * cosI - cosT) - comps.eye * nRatio;
     auto refractRay = Ray(comps.underPoint, direction);
-    auto color = colorAt(refractRay, remaining - 1) * material.transparency;
-    return color;
+    return colorAt(refractRay, remaining - 1) * material.transparency;
 }
 
 Ray RayTracerRenderer::rayForPixel(int x, int y) const {
-    auto camera = m_world.getCamera();
+    auto camera = m_world->getCamera();
     double xOffset = (x + 0.5) * camera.getPixelSize();
     double yOffset = (y + 0.5) * camera.getPixelSize();
 
@@ -147,17 +159,17 @@ Ray RayTracerRenderer::rayForPixel(int x, int y) const {
     auto origin = viewInverse * glm::dvec4(0, 0, 0, 1);
     auto direction = glm::normalize(pixel - origin);
 
-    return {origin, direction};
+    return { origin, direction };
 }
 
 bool RayTracerRenderer::isShadowed(const glm::dvec4 &point) const {
-    for (auto &light: m_world.getLights()) {
+    for (auto &light: m_world->getLights()) {
         auto v = light.getPosition() - point;
         auto distance = glm::length(v);
         auto direction = glm::normalize(v);
 
         auto ray = Ray { point, direction };
-        auto intersections = m_world.intersect(ray);
+        auto intersections = m_world->intersect(ray);
         auto hit = intersections.hit();
 
         if (hit.has_value() && hit.value().distance < distance) {
@@ -167,3 +179,21 @@ bool RayTracerRenderer::isShadowed(const glm::dvec4 &point) const {
     return false;
 }
 
+double RayTracerRenderer::schlick(const Computations &comps) const {
+    auto angle = glm::dot(comps.eye, comps.normal);
+
+    if (comps.n1 > comps.n2) {
+        auto n = comps.n1 / comps.n2;
+        auto sin2T = pow(n, 2) * (1.0 - pow(angle, 2));
+        if (sin2T > 1.0) {
+            return 1.0;
+        }
+
+        auto cosT = sqrt(1.0 - sin2T);
+        angle = cosT;
+    }
+
+    double r0 = pow((comps.n1 - comps.n2) / (comps.n1 + comps.n2), 2.0);
+    auto result = r0 + (1.0 - r0) * pow((1.0 - angle), 5.0);
+    return result;
+}

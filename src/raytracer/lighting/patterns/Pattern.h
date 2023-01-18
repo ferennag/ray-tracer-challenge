@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../../engine/Color.h"
+#include "../../../engine/Color.h"
 
 class Pattern {
 public:
