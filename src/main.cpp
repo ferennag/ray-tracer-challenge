@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-    auto world = SceneLoader::loadScene("../resources/reflection-refraction-scene.yaml");
+    auto world = SceneLoader::loadScene("../resources/refraction.yaml");
     auto width = world->getCamera().getWidth();
     auto height = world->getCamera().getHeight();
     auto renderer = std::make_unique<RayTracerRenderer>(width, height);

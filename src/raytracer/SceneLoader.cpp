@@ -76,10 +76,10 @@ std::unique_ptr<Pattern> SceneLoader::parsePattern(const YAML::Node &node) {
     auto color2 = Color(parseVector(node["colors"][1]));
     auto transform = SceneLoader::parseTransformations(node["transform"]);
 
-    if (type == "checker") {
+    if (type == "checkers") {
         result = std::make_unique<CheckersPattern>(color1, color2);
         result->withTransformation(transform);
-    } else if (type == "stripe") {
+    } else if (type == "stripes") {
         result = std::make_unique<StripePattern>(color1, color2);
         result->withTransformation(transform);
     } else if (type == "gradient") {
