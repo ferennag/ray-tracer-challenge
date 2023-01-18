@@ -88,3 +88,45 @@ TEST(Computations, n1n2) {
     EXPECT_NEAR(comps6.n1, 1.5, PRECISION);
     EXPECT_NEAR(comps6.n2, 1.0, PRECISION);
 }
+
+
+TEST(RayTracerRenderer, schlick_TotalReflectance) {
+    auto ray = Ray({ 0, 0, sqrt(2.0) / 2.0 }, { 0, 1, 0 });
+    auto shape = Sphere();
+    shape.withMaterial({ .ambient = 1, .reflectivity = 1, .transparency = 1.0, .refractiveIndex = 1.5 });
+
+    auto is = Intersections();
+    is.addIntersection(&shape, -sqrt(2.0) / 2.0);
+    is.addIntersection(&shape, sqrt(2.0) / 2.0);
+    auto comps = prepareComputations(is.getList().at(1), is, ray);
+
+    double reflectance = comps.schlick();
+    EXPECT_NEAR(reflectance, 1.0, PRECISION);
+}
+
+TEST(RayTracerRenderer, schlick_PerpendicularRay) {
+    auto ray = Ray({ 0, 0, 0 }, { 0, 1, 0 });
+    auto shape = Sphere();
+    shape.withMaterial({ .ambient = 1, .reflectivity = 1, .transparency = 1.0, .refractiveIndex = 1.5 });
+
+    auto is = Intersections();
+    is.addIntersection(&shape, -1);
+    is.addIntersection(&shape, 1);
+    auto comps = prepareComputations(is.getList().at(1), is, ray);
+
+    double reflectance = comps.schlick();
+    EXPECT_NEAR(reflectance, 0.04, PRECISION);
+}
+
+TEST(RayTracerRenderer, schlick_N2GreaterThanN1) {
+    auto ray = Ray({ 0, 0.99, -2 }, { 0, 0, 1 });
+    auto shape = Sphere();
+    shape.withMaterial({ .ambient = 1, .reflectivity = 1, .transparency = 1.0, .refractiveIndex = 1.5 });
+
+    auto is = Intersections();
+    is.addIntersection(&shape, 1.8589);
+    auto comps = prepareComputations(is.getList().at(0), is, ray);
+
+    double reflectance = comps.schlick();
+    EXPECT_NEAR(reflectance, 0.48873, PRECISION);
+}

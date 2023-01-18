@@ -27,7 +27,7 @@ public:
 
     [[nodiscard]] const World &getWorld() const { return *m_world; }
 
-    [[nodiscard]] void setWorld(std::unique_ptr<World> world) { m_world = std::move(world); }
+    void setWorld(std::unique_ptr<World> world) { m_world = std::move(world); }
 
 protected:
     const int reflectionDepthLimit = 3;

@@ -74,7 +74,7 @@ Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
         auto material = computations.object->getMaterial();
 
         if (material.reflectivity > 0 && material.transparency > 0) {
-            auto reflectance = schlick(computations);
+            auto reflectance = computations.schlick();
 //            if(reflectance > 20) {
 //                std::cout << "Schlick function result: " << reflectance << std::endl;
 //                std::cout << computations.toString() << std::endl << std::endl;
@@ -177,23 +177,4 @@ bool RayTracerRenderer::isShadowed(const glm::dvec4 &point) const {
         }
     }
     return false;
-}
-
-double RayTracerRenderer::schlick(const Computations &comps) const {
-    auto angle = glm::dot(comps.eye, comps.normal);
-
-    if (comps.n1 > comps.n2) {
-        auto n = comps.n1 / comps.n2;
-        auto sin2T = pow(n, 2) * (1.0 - pow(angle, 2));
-        if (sin2T > 1.0) {
-            return 1.0;
-        }
-
-        auto cosT = sqrt(1.0 - sin2T);
-        angle = cosT;
-    }
-
-    double r0 = pow((comps.n1 - comps.n2) / (comps.n1 + comps.n2), 2.0);
-    auto result = r0 + (1.0 - r0) * pow((1.0 - angle), 5.0);
-    return result;
 }

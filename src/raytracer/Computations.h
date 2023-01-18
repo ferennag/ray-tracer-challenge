@@ -36,6 +36,25 @@ struct Computations {
         ss << "----------------------------------------------------------" << std::endl;
         return ss.str();
     }
+
+    [[nodiscard]] double schlick() const {
+        auto angle = glm::dot(eye, normal);
+
+        if (n1 > n2) {
+            auto n = n1 / n2;
+            auto sin2T = pow(n, 2) * (1.0 - pow(angle, 2));
+            if (sin2T > 1.0) {
+                return 1.0;
+            }
+
+            auto cosT = sqrt(1.0 - sin2T);
+            angle = cosT;
+        }
+
+        double r0 = pow((n1 - n2) / (n1 + n2), 2.0);
+        auto result = r0 + (1.0 - r0) * pow((1.0 - angle), 5.0);
+        return result;
+    }
 };
 
 static Computations prepareComputations(const Intersection &hit, const Intersections &intersections, const Ray &ray) {
