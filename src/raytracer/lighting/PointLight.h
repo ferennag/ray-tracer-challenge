@@ -8,9 +8,9 @@ public:
     PointLight() = default;
     PointLight(const glm::dvec3 &position, const glm::dvec3 &intensity = {1.0, 1.0, 1.0});
 
-    glm::dvec3 getIntensity() const { return m_intensity; }
+    [[nodiscard]] glm::dvec3 getIntensity() const { return m_intensity; }
 
-    glm::dvec4 getPosition() const { return m_position; }
+    [[nodiscard]] glm::dvec4 getPosition() const { return m_position; }
 
 private:
     glm::dvec4 m_position { 0 };

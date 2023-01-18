@@ -1,4 +1,7 @@
 #include <yaml-cpp/yaml.h>
+#include <map>
+#include <exception>
+#include <ranges>
 #include "SceneLoader.h"
 #include "shapes/Plane.h"
 #include "shapes/Sphere.h"
@@ -18,30 +21,44 @@ glm::dmat4 SceneLoader::parseTransformations(const YAML::Node &node) {
         return result;
     }
 
+    std::vector<glm::dmat4> transformations;
+
     for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
         auto transform = *it;
+        auto transformType = transform[0].as<std::string>();
 
-        if (transform[0].as<std::string>() == "scale") {
-            result *= Transformations::scale(transform[1].as<double>(), transform[2].as<double>(),
-                                             transform[3].as<double>());
+        if (transformType == "scale") {
+            transformations.push_back(Transformations::scale(transform[1].as<double>(), transform[2].as<double>(),
+                                             transform[3].as<double>()));
+            continue;
         }
 
-        if (transform[0].as<std::string>() == "translate") {
-            result *= Transformations::translate(transform[1].as<double>(), transform[2].as<double>(),
-                                                 transform[3].as<double>());
+        if (transformType == "translate") {
+            transformations.push_back(Transformations::translate(transform[1].as<double>(), transform[2].as<double>(),
+                                                 transform[3].as<double>()));
+            continue;
         }
 
-        if (transform[0].as<std::string>() == "rotate-x") {
-            result *= Transformations::rotate(transform[1].as<double>(), { 1, 0, 0 });
+        if (transformType == "rotate-x") {
+            transformations.push_back(Transformations::rotate(transform[1].as<double>(), { 1, 0, 0 }));
+            continue;
         }
 
-        if (transform[0].as<std::string>() == "rotate-y") {
-            result *= Transformations::rotate(transform[1].as<double>(), { 0, 1, 0 });
+        if (transformType == "rotate-y") {
+            transformations.push_back(Transformations::rotate(transform[1].as<double>(), { 0, 1, 0 }));
+            continue;
         }
 
-        if (transform[0].as<std::string>() == "rotate-z") {
-            result *= Transformations::rotate(transform[1].as<double>(), { 0, 0, 1 });
+        if (transformType == "rotate-z") {
+            transformations.push_back(Transformations::rotate(transform[1].as<double>(), { 0, 0, 1 }));
+            continue;
         }
+
+        throw std::runtime_error("Invalid transform : " + transformType);
+    }
+
+    for(auto &transformation: std::ranges::reverse_view(transformations)) {
+        result *= transformation;
     }
 
     return result;
@@ -73,12 +90,18 @@ std::unique_ptr<Pattern> SceneLoader::parsePattern(const YAML::Node &node) {
     return result;
 }
 
-Material SceneLoader::parseMaterial(const YAML::Node &node) {
-    Material material;
-
+Material SceneLoader::parseMaterial(const YAML::Node &node, const std::map<std::string, Material> &definitions,
+                                    const Material &extended) {
     if (!node) {
-        return material;
+        return extended;
     }
+
+    if (!node.IsMap()) {
+        auto name = node.as<std::string>();
+        return definitions.find(name)->second;
+    }
+
+    Material material = extended;
 
     if (node["color"]) {
         glm::dvec3 color = SceneLoader::parseVector(node["color"]);
@@ -128,35 +151,55 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
     auto world = std::make_unique<World>();
     YAML::Node scene = YAML::LoadFile(path.data());
 
+    std::map<std::string, Material> materialDefinitions;
+
     for (YAML::const_iterator it = scene.begin(); it != scene.end(); ++it) {
         auto node = *it;
-        auto type = node["add"].as<std::string>();
+        if (node["define"]) {
+            auto name = node["define"].as<std::string>();
+            Material extended;
 
-        if (type == "camera") {
-            auto width = node["width"].as<int>();
-            auto height = node["height"].as<int>();
-            auto fov = node["field-of-view"].as<double>();
-            glm::dvec3 position = SceneLoader::parseVector(node["from"]);
-            glm::dvec3 target = SceneLoader::parseVector(node["to"]);
-            auto camera = Camera(width, height, fov);
-            camera.setPosition(position);
-            camera.setTarget(target);
-            world->setCamera(camera);
-        } else if (type == "light") {
-            glm::dvec3 position = SceneLoader::parseVector(node["at"]);
-            glm::dvec3 intensity = SceneLoader::parseVector(node["intensity"]);
-            auto light = PointLight(position, intensity);
-            world->addLight(light);
-        } else if (type == "plane") {
-            auto plane = std::make_unique<Plane>();
-            plane->withMaterial(SceneLoader::parseMaterial(node["material"]));
-            plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-            world->addObject(std::move(plane));
-        } else if (type == "sphere") {
-            auto sphere = std::make_unique<Sphere>();
-            sphere->withMaterial(SceneLoader::parseMaterial(node["material"]));
-            sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-            world->addObject(std::move(sphere));
+            if (node["extend"]) {
+                extended = materialDefinitions.find(node["extend"].as<std::string>())->second;
+            }
+
+            auto material = parseMaterial(node["value"], materialDefinitions, extended);
+            materialDefinitions.insert({ name, material });
+        }
+    }
+
+    for (YAML::const_iterator it = scene.begin(); it != scene.end(); ++it) {
+        auto node = *it;
+
+        if (node["add"]) {
+            auto type = node["add"].as<std::string>();
+
+            if (type == "camera") {
+                auto width = node["width"].as<int>();
+                auto height = node["height"].as<int>();
+                auto fov = node["field-of-view"].as<double>();
+                glm::dvec3 position = SceneLoader::parseVector(node["from"]);
+                glm::dvec3 target = SceneLoader::parseVector(node["to"]);
+                auto camera = Camera(width, height, fov);
+                camera.setPosition(position);
+                camera.setTarget(target);
+                world->setCamera(camera);
+            } else if (type == "light") {
+                glm::dvec3 position = SceneLoader::parseVector(node["at"]);
+                glm::dvec3 intensity = SceneLoader::parseVector(node["intensity"]);
+                auto light = PointLight(position, intensity);
+                world->addLight(light);
+            } else if (type == "plane") {
+                auto plane = std::make_unique<Plane>();
+                plane->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+                plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+                world->addObject(std::move(plane));
+            } else if (type == "sphere") {
+                auto sphere = std::make_unique<Sphere>();
+                sphere->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+                sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+                world->addObject(std::move(sphere));
+            }
         }
     }
 
