@@ -1,3 +1,4 @@
+#include <random>
 #include <iostream>
 #include <algorithm>
 #include <thread>
@@ -9,6 +10,9 @@
 
 RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, height) {
     m_world = std::make_unique<World>();
+    std::random_device seeder;
+    const auto seed { seeder.entropy() ? seeder() : time(nullptr) };
+    m_randEngine = std::mt19937_64 { static_cast<std::mt19937_64::result_type >(seed) };
 }
 
 void RayTracerRenderer::render() {
@@ -43,14 +47,28 @@ void RayTracerRenderer::render() {
  * Renders only a specific rectangular area of the scene. Sets the value of the promise when the rendering completed.
  */
 void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result) {
+    std::uniform_real_distribution<double> distribution(-0.5, 0.5);
+
     for (int y = minY; y < maxY; ++y) {
         for (int x = minX; x < maxX; ++x) {
-            auto ray = rayForPixel(x, y);
-            auto color = colorAt(ray, reflectionDepthLimit);
+            std::vector<Color> colors;
+            colors.push_back(colorAt(rayForPixel(x, y), reflectionDepthLimit));
+
+            for (int i = 0; i < samples; ++i) {
+                auto dx = distribution(m_randEngine);
+                auto dy = distribution(m_randEngine);
+                auto ray = rayForPixel(x + dx, y + dy);
+                colors.push_back(colorAt(ray, reflectionDepthLimit));
+            }
+
+            auto average = std::accumulate(colors.begin(), colors.end(), colors[0], [](const Color &lhs, const Color &rhs) {
+                return lhs.mix(rhs);
+            });
+
             // We are not changing the content of the vector (only the values in the objects stored in the vector),
             // so this is considered a reading operation from the vector's perspective.
             // Thus, this operation is thread safe, no need for mutex.
-            m_buffer[y][x].copy(color);
+            m_buffer[y][x].copy(average);
         }
     }
     result.set_value();
@@ -75,10 +93,6 @@ Color RayTracerRenderer::colorAt(const Ray &ray, const int remaining) const {
 
         if (material.reflectivity > 0 && material.transparency > 0) {
             auto reflectance = computations.schlick();
-//            if(reflectance > 20) {
-//                std::cout << "Schlick function result: " << reflectance << std::endl;
-//                std::cout << computations.toString() << std::endl << std::endl;
-//            }
             return finalColor + (reflection * reflectance) + (refraction * (1.0 - reflectance));
         } else {
             return finalColor + reflection + refraction;
@@ -146,7 +160,7 @@ Color RayTracerRenderer::refractedColor(const Computations &comps, const int rem
     return colorAt(refractRay, remaining - 1) * material.transparency;
 }
 
-Ray RayTracerRenderer::rayForPixel(int x, int y) const {
+Ray RayTracerRenderer::rayForPixel(double x, double y) const {
     auto camera = m_world->getCamera();
     double xOffset = (x + 0.5) * camera.getPixelSize();
     double yOffset = (y + 0.5) * camera.getPixelSize();

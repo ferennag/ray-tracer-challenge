@@ -145,3 +145,12 @@ bool Color::operator==(const Color &rhs) const {
            && std::fabs(m_blue - rhs.m_blue) < PRECISION
            && std::fabs(m_alpha - rhs.m_alpha) < PRECISION;
 }
+
+Color Color::mix(const Color &rhs) const {
+    return {
+        glm::mix(m_red, rhs.r(), 0.5),
+        glm::mix(m_green, rhs.g(), 0.5),
+        glm::mix(m_blue, rhs.b(), 0.5),
+        glm::mix(m_alpha, rhs.m_alpha, 0.5)
+    };
+}

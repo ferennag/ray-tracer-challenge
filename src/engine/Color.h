@@ -27,6 +27,8 @@ public:
     Color operator+(const glm::vec3 &value) const;
     Color operator-(const Color &other) const;
 
+    Color mix(const Color &rhs) const;
+
     bool operator==(const Color &rhs) const;
 
     static Color black() {

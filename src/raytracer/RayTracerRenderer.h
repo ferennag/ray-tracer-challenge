@@ -1,6 +1,7 @@
 #ifndef RAY_TRACER_CHALLENGE_RAYTRACERRENDERER_H
 #define RAY_TRACER_CHALLENGE_RAYTRACERRENDERER_H
 
+#include <random>
 #include <future>
 #include <glm.hpp>
 #include "../engine/Renderer.h"
@@ -31,9 +32,11 @@ public:
 
 protected:
     const int reflectionDepthLimit = 3;
+    const int samples = 4;
+    std::mt19937_64 m_randEngine;
     std::unique_ptr<World> m_world;
 
-    Ray rayForPixel(int x, int y) const;
+    Ray rayForPixel(double x, double y) const;
     Color colorAt(const Ray &ray, int remaining) const;
 
     void renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result);
