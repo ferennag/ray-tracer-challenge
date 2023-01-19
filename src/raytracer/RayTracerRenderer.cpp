@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <thread>
 #include <future>
-#include <glm/gtc/matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 #include "RayTracerRenderer.h"
 #include "Ray.h"
 #include "shapes/Sphere.h"

@@ -1,4 +1,4 @@
-#include <glm/gtc/matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 #include "Camera.h"
 
 Camera::Camera(int w, int h, double fov) {

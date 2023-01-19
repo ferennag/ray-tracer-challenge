@@ -1,5 +1,5 @@
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include "Transformations.h"
 
 glm::dmat4 Transformations::identity() {

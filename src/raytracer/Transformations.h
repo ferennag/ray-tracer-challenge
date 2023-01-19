@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_CHALLENGE_TRANSFORMATIONS_H
 #define RAY_TRACER_CHALLENGE_TRANSFORMATIONS_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class Transformations {
 public:

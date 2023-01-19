@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <glm/gtx/string_cast.hpp>
+#include <gtx/string_cast.hpp>
 #include <string>
 #include <sstream>
 #include "Intersections.h"

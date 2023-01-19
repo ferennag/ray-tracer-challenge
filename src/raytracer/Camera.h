@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_CHALLENGE_CAMERA_H
 #define RAY_TRACER_CHALLENGE_CAMERA_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class Camera {
 public:

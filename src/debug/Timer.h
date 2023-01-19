@@ -2,7 +2,7 @@
 #define RAY_TRACER_CHALLENGE_TIMER_H
 
 #include <string_view>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 class Timer {
 public:

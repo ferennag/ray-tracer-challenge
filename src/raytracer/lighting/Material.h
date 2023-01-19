@@ -2,7 +2,7 @@
 #define RAY_TRACER_CHALLENGE_MATERIAL_H
 
 #include <memory>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "../../engine/Color.h"
 #include "patterns/Pattern.h"
 #include "patterns/StripePattern.h"

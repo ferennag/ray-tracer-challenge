@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_CHALLENGE_COLOR_H
 #define RAY_TRACER_CHALLENGE_COLOR_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include <array>
 #include <cstdint>
 

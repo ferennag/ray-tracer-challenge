@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_CHALLENGE_POINTLIGHT_H
 #define RAY_TRACER_CHALLENGE_POINTLIGHT_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class PointLight {
 public:

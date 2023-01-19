@@ -2,7 +2,7 @@
 #define RAY_TRACER_CHALLENGE_RAYTRACERRENDERER_H
 
 #include <future>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "../engine/Renderer.h"
 #include "lighting/PointLight.h"
 #include "lighting/Material.h"

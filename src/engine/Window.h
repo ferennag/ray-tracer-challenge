@@ -5,7 +5,7 @@
 #include <future>
 #include <thread>
 #include <string_view>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "Renderer.h"
 
 class Window {

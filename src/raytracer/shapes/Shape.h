@@ -2,8 +2,8 @@
 #define RAY_TRACER_CHALLENGE_SHAPE_H
 
 #include <memory>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include "../Ray.h"
 #include "../Intersections.h"
 #include "../lighting/Material.h"

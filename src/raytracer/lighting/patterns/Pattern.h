@@ -2,8 +2,8 @@
 #define RAY_TRACER_CHALLENGE_PATTERN_H
 
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include "../../../engine/Color.h"
 
 class Pattern {

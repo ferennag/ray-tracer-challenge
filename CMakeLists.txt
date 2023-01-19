@@ -27,6 +27,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(yaml-cpp glm SDL2 GTest)
 
+include_directories(${yaml-cpp_SOURCE_DIR}/include ${glm_SOURCE_DIR}/glm ${SDL2_SOURCE_DIR}/include ${GTest_SOURCE_DIR}/googletest/include)
+
 file(GLOB_RECURSE SOURCES
         src/*.h
         src/*.cpp)
