@@ -47,18 +47,22 @@ void RayTracerRenderer::render() {
  * Renders only a specific rectangular area of the scene. Sets the value of the promise when the rendering completed.
  */
 void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result) {
-    std::uniform_real_distribution<double> distribution(-0.5, 0.5);
+    //std::uniform_real_distribution<double> distribution(-0.5, 0.5);
 
     for (int y = minY; y < maxY; ++y) {
         for (int x = minX; x < maxX; ++x) {
             std::vector<Color> colors;
             colors.push_back(colorAt(rayForPixel(x, y), reflectionDepthLimit));
 
+            auto range = 2.0;
+            auto sampleSize = range / samples;
             for (int i = 0; i < samples; ++i) {
-                auto dx = distribution(m_randEngine);
-                auto dy = distribution(m_randEngine);
-                auto ray = rayForPixel(x + dx, y + dy);
-                colors.push_back(colorAt(ray, reflectionDepthLimit));
+                for (int j = 0; j < samples; ++j) {
+                    auto dx = -range / 2.0 + j*sampleSize;
+                    auto dy = -range / 2.0 + i*sampleSize;
+                    auto ray = rayForPixel(x + dx, y + dy);
+                    colors.push_back(colorAt(ray, reflectionDepthLimit));
+                }
             }
 
             auto average = std::accumulate(colors.begin(), colors.end(), colors[0], [](const Color &lhs, const Color &rhs) {
