@@ -29,6 +29,17 @@ TEST(Computations, overPoint) {
     EXPECT_LT(comps.overPoint.z, comps.point.z);
 }
 
+TEST(Computations, intersectionInside_normalInverted) {
+    auto shape = Sphere();
+    auto ray = Ray({ 0, 0, 0 }, { 0, 0, 1 });
+    Intersections is;
+    is.addIntersection(&shape, 1);
+    auto comps = prepareComputations(is.hit().value(), is, ray);
+    EXPECT_NEAR(comps.normal.x, 0.0, PRECISION);
+    EXPECT_NEAR(comps.normal.y, 0.0, PRECISION);
+    EXPECT_NEAR(comps.normal.z, -1.0, PRECISION);
+}
+
 TEST(Computations, underPoint) {
     auto shape = Sphere();
     shape.withMaterial({ .transparency = 1.0, .refractiveIndex = 1.5 });

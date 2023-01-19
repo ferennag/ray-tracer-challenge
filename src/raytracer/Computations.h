@@ -59,7 +59,13 @@ struct Computations {
 
 static Computations prepareComputations(const Intersection &hit, const Intersections &intersections, const Ray &ray) {
     auto point = ray.at(hit.distance);
+    auto eye = -ray.getDirection();
     auto normal = hit.object->getNormalAt(point);
+
+    if (glm::dot(normal, eye) < 0) {
+        normal = -normal;
+    }
+
     auto overPoint = point + normal * PRECISION;
     auto underPoint = point - normal * PRECISION;
     auto reflect = glm::reflect(ray.getDirection(), normal);
@@ -105,7 +111,7 @@ static Computations prepareComputations(const Intersection &hit, const Intersect
             .point = point,
             .overPoint = overPoint,
             .underPoint = underPoint,
-            .eye = -ray.getDirection(),
+            .eye = eye,
             .normal = normal,
             .reflect = reflect,
             .n1 = n1,
