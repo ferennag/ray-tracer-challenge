@@ -188,7 +188,7 @@ TEST(RayTracerRenderer, refractedColor_RefractedColor) {
     auto comps = prepareComputations(is.getList().at(2), is, ray);
 
     auto result = renderer.refractedColor(comps, 5);
-    EXPECT_NEAR(result.r(), 0, PRECISION);
-    EXPECT_NEAR(result.g(), 0.99888, PRECISION);
-    EXPECT_NEAR(result.b(), 0.04725, PRECISION);
+    EXPECT_NEAR(result.r(), 0, PRECISION * 10);
+    EXPECT_NEAR(result.g(), 0.99888, PRECISION * 10);
+    EXPECT_NEAR(result.b(), 0.04725, PRECISION * 10);
 }

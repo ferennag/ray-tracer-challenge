@@ -25,8 +25,6 @@ public:
 
     [[nodiscard]] Color refractedColor(const Computations &comps, int remaining) const;
 
-    [[nodiscard]] double schlick(const Computations &comps) const;
-
     [[nodiscard]] const World &getWorld() const { return *m_world; }
 
     void setWorld(std::unique_ptr<World> world) { m_world = std::move(world); }
