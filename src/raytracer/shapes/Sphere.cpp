@@ -1,7 +1,6 @@
 #include "Sphere.h"
 
-Sphere::Sphere() : Shape() {
-    withTransformation(glm::identity<glm::dmat4>());
+Sphere::Sphere(Shape *parent) : Shape(parent) {
 }
 
 Intersections Sphere::localIntersect(const Ray &ray) const {

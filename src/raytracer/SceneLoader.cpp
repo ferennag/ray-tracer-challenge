@@ -11,6 +11,7 @@
 #include "shapes/Cube.h"
 #include "shapes/Cylinder.h"
 #include "shapes/Cone.h"
+#include "shapes/Group.h"
 
 glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
@@ -176,7 +177,6 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
 
         if (node["add"]) {
             auto type = node["add"].as<std::string>();
-
             if (type == "camera") {
                 auto width = node["width"].as<int>();
                 auto height = node["height"].as<int>();
@@ -192,60 +192,84 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
                 glm::dvec3 intensity = SceneLoader::parseVector(node["intensity"]);
                 auto light = PointLight(position, intensity);
                 world->addLight(light);
-            } else if (type == "plane") {
-                auto plane = std::make_unique<Plane>();
-                plane->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
-                plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-                world->addObject(std::move(plane));
-            } else if (type == "sphere") {
-                auto sphere = std::make_unique<Sphere>();
-                sphere->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
-                sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-                world->addObject(std::move(sphere));
-            } else if (type == "cube") {
-                auto cube = std::make_unique<Cube>();
-                cube->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
-                cube->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-                world->addObject(std::move(cube));
-            } else if (type == "cylinder") {
-                auto cylinder = std::make_unique<Cylinder>();
-                cylinder->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
-                cylinder->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-
-                if (node["minimum"]) {
-                    cylinder->setMinimum(node["minimum"].as<double>());
-                }
-
-                if (node["maximum"]) {
-                    cylinder->setMaximum(node["maximum"].as<double>());
-                }
-
-                if (node["closed"]) {
-                    cylinder->setClosed(node["closed"].as<bool>());
-                }
-
-                world->addObject(std::move(cylinder));
-            } else if (type == "cone") {
-                auto cone = std::make_unique<Cone>();
-                cone->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
-                cone->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-
-                if (node["minimum"]) {
-                    cone->setMinimum(node["minimum"].as<double>());
-                }
-
-                if (node["maximum"]) {
-                    cone->setMaximum(node["maximum"].as<double>());
-                }
-
-                if (node["closed"]) {
-                    cone->setClosed(node["closed"].as<bool>());
-                }
-
-                world->addObject(std::move(cone));
+            } else {
+                auto shape = parseShape(node, materialDefinitions);
+                world->addObject(std::move(shape));
             }
         }
     }
 
     return world;
+}
+
+std::unique_ptr<Shape>
+SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Material> &materialDefinitions,
+                        Shape *parent) {
+    auto type = node["add"].as<std::string>();
+    if (type == "group") {
+        auto group = std::make_unique<Group>(parent);
+        group->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+
+        if (node["children"]) {
+            auto children = node["children"];
+            for (YAML::const_iterator it = children.begin(); it != children.end(); ++it) {
+                auto node = *it;
+                auto shape = parseShape(node, materialDefinitions, group.get());
+                group->addChild(std::move(shape));
+            }
+        }
+
+        return group;
+    } else if (type == "plane") {
+        auto plane = std::make_unique<Plane>(parent);
+        plane->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        return plane;
+    } else if (type == "sphere") {
+        auto sphere = std::make_unique<Sphere>(parent);
+        sphere->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        return sphere;
+    } else if (type == "cube") {
+        auto cube = std::make_unique<Cube>(parent);
+        cube->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        cube->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        return cube;
+    } else if (type == "cylinder") {
+        auto cylinder = std::make_unique<Cylinder>(parent);
+        cylinder->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        cylinder->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+
+        if (node["minimum"]) {
+            cylinder->setMinimum(node["minimum"].as<double>());
+        }
+
+        if (node["maximum"]) {
+            cylinder->setMaximum(node["maximum"].as<double>());
+        }
+
+        if (node["closed"]) {
+            cylinder->setClosed(node["closed"].as<bool>());
+        }
+
+        return cylinder;
+    } else if (type == "cone") {
+        auto cone = std::make_unique<Cone>(parent);
+        cone->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        cone->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+
+        if (node["minimum"]) {
+            cone->setMinimum(node["minimum"].as<double>());
+        }
+
+        if (node["maximum"]) {
+            cone->setMaximum(node["maximum"].as<double>());
+        }
+
+        if (node["closed"]) {
+            cone->setClosed(node["closed"].as<bool>());
+        }
+
+        return cone;
+    }
 }

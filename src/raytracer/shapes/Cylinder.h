@@ -5,7 +5,7 @@
 
 class Cylinder : public Shape {
 public:
-    Cylinder() = default;
+    explicit Cylinder(Shape *parent = nullptr);
     ~Cylinder() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

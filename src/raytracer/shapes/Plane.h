@@ -5,6 +5,7 @@
 
 class Plane : public Shape {
 public:
+    explicit Plane(Shape *parent = nullptr);
     ~Plane() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

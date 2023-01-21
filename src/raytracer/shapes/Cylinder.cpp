@@ -77,3 +77,6 @@ void Cylinder::intersectCaps(const Ray &ray, Intersections &xs) const {
         xs.addIntersection(this, t);
     }
 }
+
+Cylinder::Cylinder(Shape *parent) : Shape(parent) {
+}

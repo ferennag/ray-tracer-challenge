@@ -51,64 +51,68 @@
     - [ translate, -10, 0, 0 ]
   material: wall-material
 
-- add: cube
+- add: group
   transform:
     - [ translate, 0, 0, 0 ]
-    - [ scale, 1, 1, 1 ]
-  material:
-    color: [0.0, 0.1 , 0]
-    ambient: 0.1
-    diffuse: 0.8
-    specular: 1.0
-    shininess: 300
-    reflective: 0.1
-    transparency: 0
-    refractive-index: 1.8
+  children:
+    - add: cube
+      transform:
+        - [ translate, 0, 0, 0 ]
+        - [ scale, 1, 1, 1 ]
+      material:
+        color: [0.0, 0.1 , 0]
+        ambient: 0.1
+        diffuse: 0.8
+        specular: 1.0
+        shininess: 300
+        reflective: 0.1
+        transparency: 0
+        refractive-index: 1.8
 
-- add: cylinder
-  minimum: 0
-  maximum: 1
-  closed: true
-  transform:
-    - [ translate, 0, 1, 0 ]
-    - [ scale, 1, 1, 1 ]
-  material:
-    color: [ 0.7, 0.0 , 0.0 ]
-    ambient: 0.1
-    diffuse: 0.6
-    specular: 1.0
-    shininess: 300
-    reflective: 0.3
-    transparency: 0.0
-    refractive-index: 1.8
+    - add: cylinder
+      minimum: 0
+      maximum: 1
+      closed: true
+      transform:
+        - [ translate, 0, 1, 0 ]
+        - [ scale, 1, 1, 1 ]
+      material:
+        color: [ 0.7, 0.0 , 0.0 ]
+        ambient: 0.1
+        diffuse: 0.6
+        specular: 1.0
+        shininess: 300
+        reflective: 0.3
+        transparency: 0.0
+        refractive-index: 1.8
 
-- add: cone
-  minimum: 0
-  maximum: 1
-  closed: true
-  transform:
-    - [ translate, 0, 1, 0 ]
-    - [ scale, 1, 2, 1 ]
-  material:
-    color: [ 0.0, 0.0 , 0.7 ]
-    ambient: 0.1
-    diffuse: 0.6
-    specular: 1.0
-    shininess: 300
-    reflective: 0.3
-    transparency: 0.0
-    refractive-index: 1.8
-
-- add: sphere
-  transform:
-    - [ translate, 0, 4, 0 ]
-    - [ scale, 1, 1, 1 ]
-  material:
-    color: [0.1, 0, 0]
-    ambient: 0.1
-    diffuse: 0.1
-    specular: 1.0
-    shininess: 300
-    reflective: 0.5
-    transparency: 1.0
-    refractive-index: 2.4
+    - add: cone
+      minimum: 0
+      maximum: 1
+      closed: true
+      transform:
+        - [ translate, 0, 1, 0 ]
+        - [ scale, 1, 2, 1 ]
+      material:
+        color: [ 0.0, 0.0 , 0.7 ]
+        ambient: 0.1
+        diffuse: 0.6
+        specular: 1.0
+        shininess: 300
+        reflective: 0.3
+        transparency: 0.0
+        refractive-index: 1.8
+        
+    - add: sphere
+      transform:
+        - [ translate, 0, 4, 0 ]
+        - [ scale, 1, 1, 1 ]
+      material:
+        color: [0.1, 0, 0]
+        ambient: 0.1
+        diffuse: 0.1
+        specular: 1.0
+        shininess: 300
+        reflective: 0.5
+        transparency: 1.0
+        refractive-index: 2.4

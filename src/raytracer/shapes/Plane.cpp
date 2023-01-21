@@ -1,6 +1,9 @@
 #include "Plane.h"
 #include "../../engine/util/RayMath.h"
 
+Plane::Plane(Shape *parent) : Shape(parent) {
+}
+
 Intersections Plane::localIntersect(const Ray &ray) const {
     Intersections result;
 
@@ -16,3 +19,4 @@ Intersections Plane::localIntersect(const Ray &ray) const {
 glm::dvec4 Plane::getLocalNormalAt(const glm::dvec4 &point) const {
     return { 0, 1, 0, 0 };
 }
+

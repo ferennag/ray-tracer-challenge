@@ -18,8 +18,7 @@ static std::pair<double, double> checkAxis(double origin, double direction) {
     return { tmin, tmax };
 }
 
-Cube::Cube() {
-    withTransformation(glm::identity<glm::dmat4>());
+Cube::Cube(Shape *parent): Shape(parent) {
 }
 
 Intersections Cube::localIntersect(const Ray &ray) const {

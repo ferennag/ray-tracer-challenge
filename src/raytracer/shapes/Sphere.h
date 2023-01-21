@@ -11,7 +11,7 @@
 
 class Sphere: public Shape {
 public:
-    Sphere();
+    explicit Sphere(Shape *parent = nullptr);
     ~Sphere() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

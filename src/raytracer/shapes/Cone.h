@@ -6,7 +6,7 @@
 
 class Cone: public Shape {
 public:
-    Cone() = default;
+    explicit Cone(Shape *parent = nullptr);
     ~Cone() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

@@ -1,5 +1,9 @@
 #include "Cone.h"
 
+Cone::Cone(Shape *parent) : Shape(parent) {
+}
+
+
 static bool checkCap(const Ray &ray, double t, double y) {
     auto x = ray.getOrigin().x + t * ray.getDirection().x;
     auto z = ray.getOrigin().z + t * ray.getDirection().z;

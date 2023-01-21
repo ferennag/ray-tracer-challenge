@@ -10,8 +10,11 @@
 
 class Shape {
 public:
-    Shape();
+    Shape(Shape *parent = nullptr);
     virtual ~Shape() = default;
+
+    [[nodiscard]] glm::dvec4 worldToObject(const glm::dvec4 &point) const;
+    [[nodiscard]] glm::dvec4 normalToWorld(const glm::dvec4 &normal) const;
 
     [[nodiscard]] virtual Intersections intersect(const Ray &ray) const;
     [[nodiscard]] virtual Intersections localIntersect(const Ray &ray) const = 0;
@@ -23,8 +26,11 @@ public:
     Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }
+    [[nodiscard]] Shape *getParent() const;
+    void setParent(Shape *parent);
 
 protected:
+    Shape *m_parent { nullptr };
     Material m_material;
     glm::dmat4 m_model { glm::identity<glm::dmat4>() };
     glm::dmat4 m_modelInverse { glm::identity<glm::dmat4>() };

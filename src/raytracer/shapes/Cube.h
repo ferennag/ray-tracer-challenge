@@ -6,7 +6,7 @@
 
 class Cube: public Shape {
 public:
-    Cube();
+    Cube(Shape *parent = nullptr);
     ~Cube() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

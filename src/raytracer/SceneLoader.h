@@ -24,6 +24,10 @@ public:
     static std::unique_ptr<Pattern> parsePattern(const YAML::Node &node);
     static Material parseMaterial(const YAML::Node &node, const std::map<std::string, Material> &definitions,
                                   const Material &extended = Material());
+
+    static std::unique_ptr<Shape>
+    parseShape(const YAML::Node &node, const std::map<std::string, Material> &materialDefinitions,
+               Shape *parent = nullptr);
 private:
     SceneLoader() = default;
 };
