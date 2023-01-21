@@ -9,6 +9,8 @@
 #include "lighting/patterns/CheckersPattern.h"
 #include "lighting/patterns/GradientPattern.h"
 #include "shapes/Cube.h"
+#include "shapes/Cylinder.h"
+#include "shapes/Cone.h"
 
 glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
@@ -30,13 +32,13 @@ glm::dmat4 SceneLoader::parseTransformations(const YAML::Node &node) {
 
         if (transformType == "scale") {
             transformations.push_back(Transformations::scale(transform[1].as<double>(), transform[2].as<double>(),
-                                             transform[3].as<double>()));
+                                                             transform[3].as<double>()));
             continue;
         }
 
         if (transformType == "translate") {
             transformations.push_back(Transformations::translate(transform[1].as<double>(), transform[2].as<double>(),
-                                                 transform[3].as<double>()));
+                                                                 transform[3].as<double>()));
             continue;
         }
 
@@ -58,7 +60,7 @@ glm::dmat4 SceneLoader::parseTransformations(const YAML::Node &node) {
         throw std::runtime_error("Invalid transform : " + transformType);
     }
 
-    for(auto &transformation: std::ranges::reverse_view(transformations)) {
+    for (auto &transformation: std::ranges::reverse_view(transformations)) {
         result *= transformation;
     }
 
@@ -205,6 +207,42 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
                 cube->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
                 cube->withTransformation(SceneLoader::parseTransformations(node["transform"]));
                 world->addObject(std::move(cube));
+            } else if (type == "cylinder") {
+                auto cylinder = std::make_unique<Cylinder>();
+                cylinder->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+                cylinder->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+
+                if (node["minimum"]) {
+                    cylinder->setMinimum(node["minimum"].as<double>());
+                }
+
+                if (node["maximum"]) {
+                    cylinder->setMaximum(node["maximum"].as<double>());
+                }
+
+                if (node["closed"]) {
+                    cylinder->setClosed(node["closed"].as<bool>());
+                }
+
+                world->addObject(std::move(cylinder));
+            } else if (type == "cone") {
+                auto cone = std::make_unique<Cone>();
+                cone->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+                cone->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+
+                if (node["minimum"]) {
+                    cone->setMinimum(node["minimum"].as<double>());
+                }
+
+                if (node["maximum"]) {
+                    cone->setMaximum(node["maximum"].as<double>());
+                }
+
+                if (node["closed"]) {
+                    cone->setClosed(node["closed"].as<bool>());
+                }
+
+                world->addObject(std::move(cone));
             }
         }
     }
