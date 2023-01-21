@@ -2,17 +2,17 @@
   width: 1000
   height: 1000
   field-of-view: 1.152
-  from: [3, 4, -8]
-  to: [0, 0, 0]
-  up: [0, 1, 0]
+  from: [ 3, 4, -8 ]
+  to: [ 0, 0, 0 ]
+  up: [ 0, 1, 0 ]
 
 # ======================================================
 # Light sources
 # ======================================================
 
 - add: light
-  at: [-8, 8, -8]
-  intensity: [1, 1, 1]
+  at: [ -8, 8, -8 ]
+  intensity: [ 1, 1, 1 ]
 
 # ======================================================
 # Materials
@@ -60,7 +60,7 @@
         - [ translate, 0, 0, 0 ]
         - [ scale, 1, 1, 1 ]
       material:
-        color: [0.0, 0.1 , 0]
+        color: [ 0.0, 0.1 , 0 ]
         ambient: 0.1
         diffuse: 0.8
         specular: 1.0
@@ -108,7 +108,7 @@
         - [ translate, 0, 4, 0 ]
         - [ scale, 1, 1, 1 ]
       material:
-        color: [0.1, 0, 0]
+        color: [ 0.1, 0, 0 ]
         ambient: 0.1
         diffuse: 0.1
         specular: 1.0
@@ -116,3 +116,21 @@
         reflective: 0.5
         transparency: 1.0
         refractive-index: 2.4
+
+- add: triangle
+  points:
+    - [ -1, -1, 0 ]
+    - [ 1, -1, 0 ]
+    - [ 0, 1, 0 ]
+  transform:
+    - [ translate, 0, 0, -4 ]
+    - [ scale, 1, 1, 1 ]
+  material:
+    color: [ 0.5, 0.5, 0 ]
+    ambient: 0.1
+    diffuse: 0.8
+    specular: 1.0
+    shininess: 300
+    reflective: 0.0
+    transparency: 0.0
+    refractive-index: 1.0

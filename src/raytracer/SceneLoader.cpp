@@ -12,6 +12,7 @@
 #include "shapes/Cylinder.h"
 #include "shapes/Cone.h"
 #include "shapes/Group.h"
+#include "shapes/Triangle.h"
 
 glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
@@ -271,5 +272,14 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
         }
 
         return cone;
+    } else if (type == "triangle") {
+        glm::dvec4 a = { parseVector(node["points"][0]), 1 };
+        glm::dvec4 b = { parseVector(node["points"][1]), 1 };
+        glm::dvec4 c = { parseVector(node["points"][2]), 1 };
+
+        auto triangle = std::make_unique<Triangle>(a, b, c, parent);
+        triangle->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+        triangle->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        return triangle;
     }
 }
