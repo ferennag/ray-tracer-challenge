@@ -14,8 +14,12 @@ public:
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;
     [[nodiscard]] glm::dvec4 getLocalNormalAt(const glm::dvec4 &point) const override;
+    [[nodiscard]] Bounds bounds() const override;
 private:
     std::vector<std::unique_ptr<Shape>> m_children;
+    Bounds m_bounds;
+
+    [[nodiscard]] void calculateBounds();
 };
 
 

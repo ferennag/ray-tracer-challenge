@@ -7,6 +7,7 @@
 #include "../Ray.h"
 #include "../Intersections.h"
 #include "../lighting/Material.h"
+#include "../../engine/Bounds.h"
 
 class Shape {
 public:
@@ -19,10 +20,12 @@ public:
     [[nodiscard]] virtual Intersections intersect(const Ray &ray) const;
     [[nodiscard]] virtual Intersections localIntersect(const Ray &ray) const = 0;
     [[nodiscard]] virtual glm::dvec4 getLocalNormalAt(const glm::dvec4 &point) const = 0;
+    [[nodiscard]] virtual Bounds bounds() const = 0;
     [[nodiscard]] virtual glm::dvec4 getNormalAt(const glm::dvec4 &point) const;
     [[nodiscard]] virtual Color getColorAt(const glm::dvec4 &point) const;
 
     Shape &withTransformation(const glm::dmat4 &transformation);
+    [[nodiscard]] glm::dmat4 getTransformation() const;
     Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }

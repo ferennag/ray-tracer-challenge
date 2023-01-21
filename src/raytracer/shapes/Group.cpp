@@ -8,10 +8,17 @@ bool Group::isEmpty() const {
 void Group::addChild(std::unique_ptr<Shape> child) {
     child->setParent(this);
     m_children.push_back(std::move(child));
+    calculateBounds();
 }
 
 Intersections Group::localIntersect(const Ray &ray) const {
     Intersections xs;
+
+    auto bs = bounds();
+
+    if (!bs.intersect(ray)) {
+        return xs;
+    }
 
     for (auto &child: m_children) {
         xs.addIntersections(child->intersect(ray));
@@ -25,5 +32,24 @@ glm::dvec4 Group::getLocalNormalAt(const glm::dvec4 &point) const {
 }
 
 Group::Group(Shape *parent) : Shape(parent) {
+}
+
+Bounds Group::bounds() const {
+    return m_bounds;
+}
+
+void Group::calculateBounds() {
+    if (m_children.empty()) {
+        m_bounds = {{ 0, 0, 0, 1 },
+                    { 0, 0, 0, 1 }};
+    } else {
+        Bounds result;
+        for (auto &child: m_children) {
+            auto bounds = child->bounds();
+            auto groupSpaceBounds = bounds.transform(child->getTransformation());
+            result = result.extend(groupSpaceBounds);
+        }
+        m_bounds = result;
+    }
 }
 

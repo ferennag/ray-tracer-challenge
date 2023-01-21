@@ -92,3 +92,8 @@ void Cone::setMaximum(double max) {
 void Cone::setClosed(bool closed) {
     m_closed = closed;
 }
+
+Bounds Cone::bounds() const {
+    return {{ -1, -m_minimum, -1, 1 },
+            { 1,  m_maximum,  1,  1 }};
+}

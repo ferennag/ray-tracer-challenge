@@ -102,7 +102,7 @@
         reflective: 0.3
         transparency: 0.0
         refractive-index: 1.8
-        
+
     - add: sphere
       transform:
         - [ translate, 0, 4, 0 ]

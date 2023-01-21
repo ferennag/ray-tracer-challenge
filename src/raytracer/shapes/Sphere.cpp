@@ -32,3 +32,7 @@ Intersections Sphere::localIntersect(const Ray &ray) const {
 glm::dvec4 Sphere::getLocalNormalAt(const glm::dvec4 &point) const {
     return point - m_position;
 }
+
+Bounds Sphere::bounds() const {
+    return {{ -1, -1, -1, 1 }, { 1, 1, 1, 1 }};
+}

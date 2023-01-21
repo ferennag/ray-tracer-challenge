@@ -20,3 +20,8 @@ glm::dvec4 Plane::getLocalNormalAt(const glm::dvec4 &point) const {
     return { 0, 1, 0, 0 };
 }
 
+Bounds Plane::bounds() const {
+    return {{ -INFINITY, 0, -INFINITY, 1 },
+            { INFINITY,  0, INFINITY,  1 }};
+}
+

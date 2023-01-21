@@ -49,3 +49,7 @@ glm::dvec4 Cube::getLocalNormalAt(const glm::dvec4 &point) const {
         return { 0, 0, point.z, 0 };
     }
 }
+
+Bounds Cube::bounds() const {
+    return {{ -1, -1, -1, 1 }, { 1, 1, 1, 1 }};
+}
