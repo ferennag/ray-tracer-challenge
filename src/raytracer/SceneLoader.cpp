@@ -8,6 +8,7 @@
 #include "Transformations.h"
 #include "lighting/patterns/CheckersPattern.h"
 #include "lighting/patterns/GradientPattern.h"
+#include "shapes/Cube.h"
 
 glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
@@ -199,6 +200,11 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
                 sphere->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
                 sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
                 world->addObject(std::move(sphere));
+            } else if (type == "cube") {
+                auto cube = std::make_unique<Cube>();
+                cube->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
+                cube->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+                world->addObject(std::move(cube));
             }
         }
     }

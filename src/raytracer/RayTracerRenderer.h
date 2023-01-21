@@ -32,7 +32,7 @@ public:
 
 protected:
     const int reflectionDepthLimit = 3;
-    const int samples = 2;
+    const int samples = 0;
     std::mt19937_64 m_randEngine;
     std::unique_ptr<World> m_world;
 

@@ -18,8 +18,8 @@ RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, he
 void RayTracerRenderer::render() {
     const auto maxThreads = std::thread::hardware_concurrency();
     // The number of blocks in each row/column to render separately
-    // In total we want as many blocks as threads are available
-    const auto blockCount = floor(sqrt(maxThreads));
+    // We will use twice the amount of blocks based on the available threads
+    const auto blockCount = floor(sqrt(maxThreads)) * 2;
     const auto dx = m_width / blockCount;
     const auto dy = m_height / blockCount;
 
@@ -47,8 +47,6 @@ void RayTracerRenderer::render() {
  * Renders only a specific rectangular area of the scene. Sets the value of the promise when the rendering completed.
  */
 void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result) {
-    //std::uniform_real_distribution<double> distribution(-0.5, 0.5);
-
     for (int y = minY; y < maxY; ++y) {
         for (int x = minX; x < maxX; ++x) {
             std::vector<Color> colors;

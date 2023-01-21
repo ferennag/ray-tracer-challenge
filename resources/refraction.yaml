@@ -79,6 +79,20 @@
     transparency: 0.1
     refractive-index: 1.8
 
+- add: cube
+  transform:
+    - [ translate, -4, 0, 0 ]
+    - [ scale, 1, 1, 1 ]
+  material:
+    color: [0.0, 0.1 , 0]
+    ambient: 0.1
+    diffuse: 0.8
+    specular: 1.0
+    shininess: 300
+    reflective: 0.1
+    transparency: 0
+    refractive-index: 1.8
+
 - add: sphere
   transform:
     - [ translate, 5, -1, 3 ]
