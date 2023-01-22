@@ -7,7 +7,7 @@ bool Group::isEmpty() const {
     return m_children.empty();
 }
 
-void Group::addChild(std::shared_ptr<Shape> child) {
+void Group::addChild(const std::shared_ptr<Shape> &child) {
     child->setParent(this);
     m_children.push_back(child);
     m_boundsReady = false;
@@ -23,12 +23,6 @@ void Group::addChildren(const std::vector<std::shared_ptr<Shape>> &children) {
 
 Intersections Group::localIntersect(const Ray &ray) const {
     Intersections xs;
-
-    auto bs = bounds();
-
-    if (!bs.intersect(ray)) {
-        return xs;
-    }
 
     for (auto &child: m_children) {
         xs.addIntersections(child->intersect(ray));

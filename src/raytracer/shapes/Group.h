@@ -10,7 +10,7 @@ public:
     ~Group() override = default;
 
     [[nodiscard]] bool isEmpty() const;
-    void addChild(std::shared_ptr<Shape> child);
+    void addChild(const std::shared_ptr<Shape> &child);
     void addChildren(const std::vector<std::shared_ptr<Shape>> &children);
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

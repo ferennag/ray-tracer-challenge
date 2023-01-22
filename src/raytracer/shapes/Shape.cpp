@@ -29,6 +29,12 @@ glm::dvec4 Shape::getNormalAt(const glm::dvec4 &point) const {
 }
 
 Intersections Shape::intersect(const Ray &ray) const {
+    auto bs = bounds();
+
+    if (!bs.intersect(ray)) {
+        return {};
+    }
+
     auto localRay = ray.transform(m_modelInverse);
     return localIntersect(localRay);
 }
