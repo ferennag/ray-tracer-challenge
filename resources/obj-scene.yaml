@@ -52,6 +52,7 @@
   material: wall-material
 
 - add: obj
-  file: ../resources/icosphere.obj
+  file: ../resources/teddy.obj
   transform:
-    - [ translate, 0, 0, 0 ]
+    - [ scale, 0.05, 0.05, 0.05 ]
+    - [ rotate-y, 3.1415 ]

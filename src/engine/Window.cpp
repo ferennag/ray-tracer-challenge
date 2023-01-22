@@ -57,6 +57,8 @@ void Window::show() {
             updateTexture();
             timer.reportElapsed("Texture update");
             renderFuture = requestRender();
+        } else {
+            updateTexture();
         }
 
         SDL_SetRenderDrawColor(m_sdlRenderer, 0, 0, 0, 0);
