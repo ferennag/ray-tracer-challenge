@@ -16,37 +16,48 @@ RayTracerRenderer::RayTracerRenderer(int width, int height) : Renderer(width, he
 }
 
 void RayTracerRenderer::render() {
-    const auto maxThreads = std::thread::hardware_concurrency();
     // The number of blocks in each row/column to render separately
     // We will use twice the amount of blocks based on the available threads
-    const auto blockCount = floor(sqrt(maxThreads)) * 2;
+    const auto blockCount = 100;
     const auto dx = m_width / blockCount;
     const auto dy = m_height / blockCount;
 
-    std::vector<std::future<void>> threads;
     for (int row = 0; row < blockCount; ++row) {
         for (int col = 0; col < blockCount; ++col) {
             auto minX = col * dx;
             auto maxX = col * dx + dx;
             auto minY = row * dy;
             auto maxY = row * dy + dy;
-            std::promise<void> promise;
-            threads.push_back(promise.get_future());
-            std::thread thread(&RayTracerRenderer::renderArea, this, minX, minY, maxX, maxY, std::move(promise));
-            thread.detach();
+
+            RenderWork renderWork = {
+                .renderer = this,
+                .minX = minX,
+                .minY = minY,
+                .maxX = maxX,
+                .maxY = maxY,
+            };
+
+            Work<RenderWork> work = {
+                    .data = renderWork,
+                    .handler = std::move([] (const RenderWork &data) {
+                        data.renderer->renderArea(data.minX, data.minY, data.maxX, data.maxY);
+                    })
+            };
+
+            m_scheduler.enqueue(work);
         }
     }
 
-    // Wait for the full scene to be rendered, otherwise there will be artifacts
-    for (auto &future: threads) {
-        future.wait();
-    }
+    std::promise<void> workPromise;
+    std::future<void> finished = workPromise.get_future();
+    m_scheduler.start(std::move(workPromise));
+    finished.wait();
 }
 
 /**
  * Renders only a specific rectangular area of the scene. Sets the value of the promise when the rendering completed.
  */
-void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result) {
+void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY) {
     for (int y = minY; y < maxY; ++y) {
         for (int x = minX; x < maxX; ++x) {
             std::vector<Color> colors;
@@ -73,7 +84,6 @@ void RayTracerRenderer::renderArea(int minX, int minY, int maxX, int maxY, std::
             m_buffer[y][x].copy(average);
         }
     }
-    result.set_value();
 }
 
 

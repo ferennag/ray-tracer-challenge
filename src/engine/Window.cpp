@@ -44,7 +44,6 @@ void Window::show() {
                     switch (event.key.keysym.scancode) {
                         case SDL_SCANCODE_ESCAPE:
                             m_shouldClose = true;
-                            m_renderingThread.request_stop();
                             break;
                     }
                 }
@@ -67,6 +66,8 @@ void Window::show() {
         SDL_RenderPresent(m_sdlRenderer);
         SDL_Delay(1000 / 60);
     }
+
+    m_renderingThread.request_stop();
 }
 
 void Window::render(std::promise<bool> promise) {

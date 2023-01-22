@@ -10,6 +10,9 @@
 #include "shapes/Sphere.h"
 #include "World.h"
 #include "Computations.h"
+#include "../engine/WorkScheduler.h"
+
+struct RenderWork;
 
 class RayTracerRenderer : public Renderer {
 public:
@@ -36,11 +39,17 @@ protected:
     std::mt19937_64 m_randEngine;
     std::unique_ptr<World> m_world;
 
+    WorkScheduler<RenderWork> m_scheduler;
+
     Ray rayForPixel(double x, double y) const;
     Color colorAt(const Ray &ray, int remaining) const;
 
-    void renderArea(int minX, int minY, int maxX, int maxY, std::promise<void> result);
+    void renderArea(int minX, int minY, int maxX, int maxY);
 };
 
+struct RenderWork {
+    RayTracerRenderer *renderer;
+    int minX, minY, maxX, maxY;
+};
 
 #endif //RAY_TRACER_CHALLENGE_RAYTRACERRENDERER_H

@@ -90,9 +90,12 @@ static std::pair<double, double> checkAxis(double origin, double direction, doub
 }
 
 bool Bounds::intersect(const Ray &ray) const {
-    auto [xtmin, xtmax] = checkAxis(ray.getOrigin().x, ray.getDirection().x, aa.x, bb.x);
-    auto [ytmin, ytmax] = checkAxis(ray.getOrigin().y, ray.getDirection().y, aa.y, bb.y);
-    auto [ztmin, ztmax] = checkAxis(ray.getOrigin().z, ray.getDirection().z, aa.z, bb.z);
+    auto origin = ray.getOrigin();
+    auto direction = ray.getDirection();
+
+    auto [xtmin, xtmax] = checkAxis(origin.x, direction.x, aa.x, bb.x);
+    auto [ytmin, ytmax] = checkAxis(origin.y, direction.y, aa.y, bb.y);
+    auto [ztmin, ztmax] = checkAxis(origin.z, direction.z, aa.z, bb.z);
 
     auto tmin = std::max(std::max(xtmin, ytmin), ztmin);
     auto tmax = std::min(std::min(xtmax, ytmax), ztmax);
