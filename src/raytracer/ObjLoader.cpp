@@ -18,6 +18,10 @@ std::unique_ptr<Group> ObjLoader::loadObjFile(std::string_view path) {
     const aiScene *scene = importer.ReadFile(path.data(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
                                                           aiProcess_SortByPType | aiProcess_GenNormals);
 
+    if (scene == nullptr) {
+        return nullptr;
+    }
+
     auto mainGroup = std::make_unique<Group>();
 
     for (int m = 0; m < scene->mNumMeshes; ++m) {

@@ -50,3 +50,8 @@
     - [ rotate-y, 1.5707963268 ]
     - [ translate, -10, 0, 0 ]
   material: wall-material
+
+- add: obj
+  file: ../resources/icosphere.obj
+  transform:
+    - [ translate, 0, 0, 0 ]

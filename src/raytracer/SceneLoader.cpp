@@ -13,6 +13,7 @@
 #include "shapes/Cone.h"
 #include "shapes/Group.h"
 #include "shapes/Triangle.h"
+#include "ObjLoader.h"
 
 glm::dvec3 SceneLoader::parseVector(const YAML::Node &node) {
     glm::dvec3 result { node[0].as<double>(), node[1].as<double>(), node[2].as<double>() };
@@ -221,6 +222,10 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
         }
 
         return group;
+    } else if (type == "obj") {
+        auto objGroup = ObjLoader::loadObjFile(node["file"].as<std::string>());
+        objGroup->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        return objGroup;
     } else if (type == "plane") {
         auto plane = std::make_unique<Plane>(parent);
         plane->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
