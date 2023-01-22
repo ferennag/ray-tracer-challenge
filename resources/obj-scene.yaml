@@ -23,10 +23,10 @@
     pattern:
       type: checkers
       colors:
-        - [ 0.7, 0.7, 0.7 ]
+        - [ 0.1, 0.1, 0.1 ]
         - [ 0.9, 0.9, 0.9 ]
     specular: 0
-    reflective: 0.05
+    reflective: 0.1
 
 # ======================================================
 # Objects
@@ -54,5 +54,5 @@
 - add: obj
   file: ../resources/teapot.obj
   transform:
-    - [ scale, 1, 1, 1 ]
+    - [ scale, 0.5, 0.5, 0.5 ]
     - [ rotate-y, 3.1415 ]

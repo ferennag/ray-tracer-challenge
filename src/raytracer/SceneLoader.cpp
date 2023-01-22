@@ -221,13 +221,13 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
             }
         }
 
-        group->subdivide(2);
+        group->subdivide(1);
 
         return group;
     } else if (type == "obj") {
         auto objGroup = ObjLoader::loadObjFile(node["file"].as<std::string>());
         objGroup->withTransformation(SceneLoader::parseTransformations(node["transform"]));
-        objGroup->subdivide(2);
+        objGroup->subdivide(1);
         return objGroup;
     } else if (type == "plane") {
         auto plane = std::make_shared<Plane>(parent);

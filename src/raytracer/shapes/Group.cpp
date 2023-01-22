@@ -75,7 +75,7 @@ void Group::subdivide(int threshold) {
             // If a group is divided into 2 parts by consuming all it's children, and moving all of them
             // in either the left or the right side ONLY, then it will cause an infinite recursion.
             // So we stop here and revert the division back.
-            m_children.insert(m_children.end(), right.begin(), right.end());
+            m_children.insert(m_children.end(), left.begin(), left.end());
             m_children.insert(m_children.end(), right.begin(), right.end());
         } else {
             if (!left.empty()) {
@@ -95,6 +95,8 @@ void Group::subdivide(int threshold) {
     for (auto &child: m_children) {
         child->subdivide(threshold);
     }
+
+    calculateBounds();
 }
 
 std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>>
