@@ -1,3 +1,4 @@
+#include <optional>
 #include <iostream>
 #include <thread>
 #include <future>
@@ -30,7 +31,7 @@ Window::~Window() {
 
 void Window::show() {
     Timer timer;
-    auto renderFuture = requestRender();
+    auto renderFuture = std::make_optional<std::future<bool>>(requestRender());
 
     while (!m_shouldClose) {
         SDL_Event event;
@@ -51,12 +52,11 @@ void Window::show() {
         }
 
         // Whenever the render is ready, copy it to the texture, and request a new render
-        if (renderFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+        if (renderFuture.has_value() && renderFuture->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             timer.reportElapsed("Frame render");
             updateTexture();
-            timer.reportElapsed("Texture update");
-            renderFuture = requestRender();
-        } else {
+            renderFuture = std::nullopt;
+        } else if (renderFuture.has_value()) {
             updateTexture();
         }
 
