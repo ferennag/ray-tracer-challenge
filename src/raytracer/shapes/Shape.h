@@ -29,8 +29,11 @@ public:
     Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }
+
     [[nodiscard]] Shape *getParent() const;
     void setParent(Shape *parent);
+
+    virtual void subdivide(int threshold) {};
 
 protected:
     Shape *m_parent { nullptr };

@@ -25,7 +25,7 @@ std::unique_ptr<Group> ObjLoader::loadObjFile(std::string_view path) {
     auto mainGroup = std::make_unique<Group>();
 
     for (int m = 0; m < scene->mNumMeshes; ++m) {
-        auto group = std::make_unique<Group>();
+        auto group = std::make_shared<Group>();
         auto *mesh = scene->mMeshes[m];
 
         for (int f = 0; f < mesh->mNumFaces; ++f) {
@@ -33,11 +33,11 @@ std::unique_ptr<Group> ObjLoader::loadObjFile(std::string_view path) {
             auto v1 = convertAiVertex(mesh->mVertices[face.mIndices[0]]);
             auto v2 = convertAiVertex(mesh->mVertices[face.mIndices[1]]);
             auto v3 = convertAiVertex(mesh->mVertices[face.mIndices[2]]);
-            auto triangle = std::make_unique<Triangle>(v1, v2, v3, group.get());
-            group->addChild(std::move(triangle));
+            auto triangle = std::make_shared<Triangle>(v1, v2, v3, group.get());
+            group->addChild(triangle);
         }
 
-        mainGroup->addChild(std::move(group));
+        mainGroup->addChild(group);
     }
 
     return mainGroup;

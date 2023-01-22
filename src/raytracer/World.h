@@ -16,16 +16,16 @@ public:
     std::vector<PointLight> getLights() const;
     Camera getCamera() const;
 
-    const std::vector<std::unique_ptr<Shape>> &getObjects() const { return m_objects; }
+    const std::vector<std::shared_ptr<Shape>> &getObjects() const { return m_objects; }
 
-    void addObject(std::unique_ptr<Shape> object) { m_objects.push_back(std::move(object)); }
+    void addObject(std::shared_ptr<Shape> object) { m_objects.push_back(object); }
 
     void addLight(const PointLight &light) { m_lights.push_back(light); }
 
     void setCamera(const Camera &camera) { m_camera = camera; }
 
 private:
-    std::vector<std::unique_ptr<Shape>> m_objects;
+    std::vector<std::shared_ptr<Shape>> m_objects;
     std::vector<PointLight> m_lights;
     Camera m_camera;
 };

@@ -31,7 +31,8 @@ Bounds Bounds::transform(const glm::dmat4 &t) const {
         maxZ = std::max(maxZ, point.z);
     }
 
-    return {{ minX, minY, minZ, 1 }, { maxX, maxY, maxZ, 1 }};
+    return {{ minX, minY, minZ, 1 },
+            { maxX, maxY, maxZ, 1 }};
 }
 
 Bounds Bounds::extend(const Bounds &rhs) const {
@@ -97,4 +98,45 @@ bool Bounds::intersect(const Ray &ray) const {
     auto tmax = std::min(std::min(xtmax, ytmax), ztmax);
 
     return tmin <= tmax;
+}
+
+std::pair<Bounds, Bounds> Bounds::split() const {
+    auto size = getSize();
+    auto longestSide = std::max(std::max(size.x, size.y), size.z);
+
+    double x0 = aa.x;
+    double y0 = aa.y;
+    double z0 = aa.z;
+
+    double x1 = bb.x;
+    double y1 = bb.y;
+    double z1 = bb.z;
+
+    if (doubleEq(longestSide, size.x)) {
+        x0 = x1 = x0 + size.x / 2.0;
+    } else if (doubleEq(longestSide, size.y)) {
+        y0 = y1 = y0 + size.y / 2.0;
+    } else {
+        z0 = z1 = z0 + size.z / 2.0;
+    }
+
+    auto midMin = glm::dvec4 { x0, y0, z0, 1 };
+    auto midMax = glm::dvec4 { x1, y1, z1, 1 };
+
+    auto left = Bounds(aa, midMax);
+    auto right = Bounds(midMin, bb);
+
+    return { left, right };
+}
+
+glm::dvec3 Bounds::getSize() const {
+    return {
+            bb.x - aa.x,
+            bb.y - aa.y,
+            bb.z - aa.z,
+    };
+}
+
+bool Bounds::includes(const Bounds &rhs) const {
+    return glm::all(glm::lessThanEqual(aa, rhs.aa)) && glm::all(glm::greaterThanEqual(bb, rhs.bb));
 }

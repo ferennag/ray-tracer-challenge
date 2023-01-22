@@ -52,7 +52,7 @@
   material: wall-material
 
 - add: obj
-  file: ../resources/teddy.obj
+  file: ../resources/teapot.obj
   transform:
-    - [ scale, 0.05, 0.05, 0.05 ]
+    - [ scale, 1, 1, 1 ]
     - [ rotate-y, 3.1415 ]

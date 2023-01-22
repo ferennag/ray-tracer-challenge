@@ -25,7 +25,7 @@ public:
     static Material parseMaterial(const YAML::Node &node, const std::map<std::string, Material> &definitions,
                                   const Material &extended = Material());
 
-    static std::unique_ptr<Shape>
+    static std::shared_ptr<Shape>
     parseShape(const YAML::Node &node, const std::map<std::string, Material> &materialDefinitions,
                Shape *parent = nullptr);
 private:

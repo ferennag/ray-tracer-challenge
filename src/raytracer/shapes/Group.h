@@ -10,17 +10,22 @@ public:
     ~Group() override = default;
 
     [[nodiscard]] bool isEmpty() const;
-    void addChild(std::unique_ptr<Shape> child);
+    void addChild(std::shared_ptr<Shape> child);
+    void addChildren(const std::vector<std::shared_ptr<Shape>> &children);
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;
     [[nodiscard]] glm::dvec4 getLocalNormalAt(const glm::dvec4 &point) const override;
     [[nodiscard]] Bounds bounds() const override;
+
+    void subdivide(int threshold) override;
+
 private:
-    std::vector<std::unique_ptr<Shape>> m_children;
+    std::vector<std::shared_ptr<Shape>> m_children;
     mutable Bounds m_bounds;
     mutable bool m_boundsReady { false };
 
-    [[nodiscard]] void calculateBounds() const;
+    void calculateBounds() const;
+    std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>> partitionChildren();
 };
 
 

@@ -196,7 +196,7 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
                 world->addLight(light);
             } else {
                 auto shape = parseShape(node, materialDefinitions);
-                world->addObject(std::move(shape));
+                world->addObject(shape);
             }
         }
     }
@@ -204,12 +204,12 @@ std::unique_ptr<World> SceneLoader::loadScene(std::string_view path) {
     return world;
 }
 
-std::unique_ptr<Shape>
+std::shared_ptr<Shape>
 SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Material> &materialDefinitions,
                         Shape *parent) {
     auto type = node["add"].as<std::string>();
     if (type == "group") {
-        auto group = std::make_unique<Group>(parent);
+        auto group = std::make_shared<Group>(parent);
         group->withTransformation(SceneLoader::parseTransformations(node["transform"]));
 
         if (node["children"]) {
@@ -217,32 +217,35 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
             for (YAML::const_iterator it = children.begin(); it != children.end(); ++it) {
                 auto node = *it;
                 auto shape = parseShape(node, materialDefinitions, group.get());
-                group->addChild(std::move(shape));
+                group->addChild(shape);
             }
         }
+
+        group->subdivide(2);
 
         return group;
     } else if (type == "obj") {
         auto objGroup = ObjLoader::loadObjFile(node["file"].as<std::string>());
         objGroup->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        objGroup->subdivide(2);
         return objGroup;
     } else if (type == "plane") {
-        auto plane = std::make_unique<Plane>(parent);
+        auto plane = std::make_shared<Plane>(parent);
         plane->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         plane->withTransformation(SceneLoader::parseTransformations(node["transform"]));
         return plane;
     } else if (type == "sphere") {
-        auto sphere = std::make_unique<Sphere>(parent);
+        auto sphere = std::make_shared<Sphere>(parent);
         sphere->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         sphere->withTransformation(SceneLoader::parseTransformations(node["transform"]));
         return sphere;
     } else if (type == "cube") {
-        auto cube = std::make_unique<Cube>(parent);
+        auto cube = std::make_shared<Cube>(parent);
         cube->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         cube->withTransformation(SceneLoader::parseTransformations(node["transform"]));
         return cube;
     } else if (type == "cylinder") {
-        auto cylinder = std::make_unique<Cylinder>(parent);
+        auto cylinder = std::make_shared<Cylinder>(parent);
         cylinder->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         cylinder->withTransformation(SceneLoader::parseTransformations(node["transform"]));
 
@@ -260,7 +263,7 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
 
         return cylinder;
     } else if (type == "cone") {
-        auto cone = std::make_unique<Cone>(parent);
+        auto cone = std::make_shared<Cone>(parent);
         cone->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         cone->withTransformation(SceneLoader::parseTransformations(node["transform"]));
 
@@ -282,7 +285,7 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
         glm::dvec4 b = { parseVector(node["points"][1]), 1 };
         glm::dvec4 c = { parseVector(node["points"][2]), 1 };
 
-        auto triangle = std::make_unique<Triangle>(a, b, c, parent);
+        auto triangle = std::make_shared<Triangle>(a, b, c, parent);
         triangle->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         triangle->withTransformation(SceneLoader::parseTransformations(node["transform"]));
         return triangle;

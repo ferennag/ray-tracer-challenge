@@ -17,6 +17,10 @@ public:
     [[nodiscard]] Bounds extend(const Bounds &rhs) const;
     [[nodiscard]] bool intersect(const Ray &ray) const;
 
+    [[nodiscard]] std::pair<Bounds, Bounds> split() const;
+    [[nodiscard]] glm::dvec3 getSize() const;
+    [[nodiscard]] bool includes(const Bounds &rhs) const;
+
 private:
     [[nodiscard]] std::vector<glm::dvec4> getAllPoints() const;
 };
