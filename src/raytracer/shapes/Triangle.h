@@ -7,6 +7,7 @@
 class Triangle : public Shape {
 public:
     explicit Triangle(const glm::dvec4 &a, const glm::dvec4 &b, const glm::dvec4 &c, Shape *parent = nullptr);
+    explicit Triangle(const glm::dvec4 &a, const glm::dvec4 &b, const glm::dvec4 &c, const glm::dvec4 &normal, Shape *parent = nullptr);
     ~Triangle() override = default;
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;

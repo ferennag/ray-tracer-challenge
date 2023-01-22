@@ -4,7 +4,7 @@
 #include <vector>
 #include "Shape.h"
 
-class Group: public Shape {
+class Group : public Shape {
 public:
     explicit Group(Shape *parent = nullptr);
     ~Group() override = default;
@@ -17,9 +17,10 @@ public:
     [[nodiscard]] Bounds bounds() const override;
 private:
     std::vector<std::unique_ptr<Shape>> m_children;
-    Bounds m_bounds;
+    mutable Bounds m_bounds;
+    mutable bool m_boundsReady { false };
 
-    [[nodiscard]] void calculateBounds();
+    [[nodiscard]] void calculateBounds() const;
 };
 
 

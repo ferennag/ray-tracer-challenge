@@ -25,9 +25,18 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG v1.13.0
 )
-FetchContent_MakeAvailable(yaml-cpp glm SDL2 GTest)
+FetchContent_Declare(
+        assimp
+        GIT_REPOSITORY https://github.com/assimp/assimp.git
+        GIT_TAG v5.2.5
+)
+FetchContent_MakeAvailable(yaml-cpp glm SDL2 GTest assimp)
 
-include_directories(${yaml-cpp_SOURCE_DIR}/include ${glm_SOURCE_DIR}/glm ${SDL2_SOURCE_DIR}/include ${GTest_SOURCE_DIR}/googletest/include)
+include_directories(${yaml-cpp_SOURCE_DIR}/include
+        ${glm_SOURCE_DIR}/glm
+        ${SDL2_SOURCE_DIR}/include
+        ${GTest_SOURCE_DIR}/googletest/include
+        ${assimp_SOURCE_DIR}/include)
 
 file(GLOB_RECURSE SOURCES
         src/*.h
@@ -48,6 +57,7 @@ target_link_libraries(ray_tracer_challenge
         SDL2
         glm
         yaml-cpp
+        assimp
 )
 
 add_executable(ray_tracer_challange_tests ${TESTS} ${TEST_SOURCES})
@@ -57,6 +67,7 @@ target_link_libraries(
         SDL2
         glm
         yaml-cpp
+        assimp
 )
 
 include(GoogleTest)

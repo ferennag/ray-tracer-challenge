@@ -116,21 +116,3 @@
         reflective: 0.5
         transparency: 1.0
         refractive-index: 2.4
-
-- add: triangle
-  points:
-    - [ -1, -1, 0 ]
-    - [ 1, -1, 0 ]
-    - [ 0, 1, 0 ]
-  transform:
-    - [ translate, 0, 0, -4 ]
-    - [ scale, 1, 1, 1 ]
-  material:
-    color: [ 0.5, 0.5, 0 ]
-    ambient: 0.1
-    diffuse: 0.8
-    specular: 1.0
-    shininess: 300
-    reflective: 0.0
-    transparency: 0.0
-    refractive-index: 1.0
