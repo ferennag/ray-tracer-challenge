@@ -31,7 +31,7 @@ Intersections Group::localIntersect(const Ray &ray) const {
     return xs;
 }
 
-glm::dvec4 Group::getLocalNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Group::getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     throw std::runtime_error("ERROR: calling local_normal_at on Group!");
 }
 

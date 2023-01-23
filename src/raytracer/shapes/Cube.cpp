@@ -38,7 +38,7 @@ Intersections Cube::localIntersect(const Ray &ray) const {
     return xs;
 }
 
-glm::dvec4 Cube::getLocalNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Cube::getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     auto maxc = std::max(std::max(absd(point.x), absd(point.y)), absd(point.z));
 
     if (doubleEq(maxc, absd(point.x))) {

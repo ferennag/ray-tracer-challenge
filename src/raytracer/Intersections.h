@@ -11,6 +11,7 @@ class Intersections {
 public:
     Intersections() = default;
     void addIntersection(const Shape *object, double distance);
+    void addIntersection(const Shape *object, double distance, double u, double v);
     void addIntersections(const Intersections &other);
     [[nodiscard]] std::optional<Intersection> hit() const;
 

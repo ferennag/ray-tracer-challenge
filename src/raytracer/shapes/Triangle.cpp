@@ -35,11 +35,11 @@ Intersections Triangle::localIntersect(const Ray &ray) const {
 
     auto t = f * glm::dot(m_e2, originCrossE1);
     Intersections xs;
-    xs.addIntersection(this, t);
+    xs.addIntersection(this, t, u, v);
     return xs;
 }
 
-glm::dvec4 Triangle::getLocalNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Triangle::getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     return m_normal;
 }
 

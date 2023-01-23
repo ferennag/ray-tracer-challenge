@@ -29,7 +29,7 @@ Intersections Sphere::localIntersect(const Ray &ray) const {
     return result;
 }
 
-glm::dvec4 Sphere::getLocalNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Sphere::getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     return point - m_position;
 }
 

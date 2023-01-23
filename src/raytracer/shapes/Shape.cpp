@@ -22,9 +22,9 @@ Shape &Shape::withMaterial(const Material &material) {
     return *this;
 }
 
-glm::dvec4 Shape::getNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Shape::getNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     auto localPoint = worldToObject(point);
-    auto localNormal = getLocalNormalAt(localPoint);
+    auto localNormal = getLocalNormalAt(localPoint, hit);
     return normalToWorld(localNormal);
 }
 

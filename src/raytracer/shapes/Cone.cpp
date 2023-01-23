@@ -67,7 +67,7 @@ void Cone::intersectCaps(const Ray &ray, Intersections &xs) const {
 }
 
 
-glm::dvec4 Cone::getLocalNormalAt(const glm::dvec4 &point) const {
+glm::dvec4 Cone::getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const {
     auto dist = pow(point.x, 2) + pow(point.z, 2);
 
     if (dist < 1 && point.y >= (m_maximum - PRECISION)) {

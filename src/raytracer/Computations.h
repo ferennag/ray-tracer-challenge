@@ -60,7 +60,7 @@ struct Computations {
 static Computations prepareComputations(const Intersection &hit, const Intersections &intersections, const Ray &ray) {
     auto point = ray.at(hit.distance);
     auto eye = -ray.getDirection();
-    auto normal = hit.object->getNormalAt(point);
+    auto normal = hit.object->getNormalAt(point, hit);
 
     if (glm::dot(normal, eye) < 0) {
         normal = -normal;

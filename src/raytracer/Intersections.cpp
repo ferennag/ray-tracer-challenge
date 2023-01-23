@@ -18,7 +18,11 @@ std::optional<Intersection> Intersections::hit() const {
 }
 
 void Intersections::addIntersection(const Shape *object, double distance) {
-    m_intersections.push_back({ .distance = distance, .object = object });
+    addIntersection(object, distance, 0, 0);
+}
+
+void Intersections::addIntersection(const Shape *object, double distance, double u, double v) {
+    m_intersections.push_back({ .distance = distance, .object = object, .u=u, .v=v });
     sort();
 }
 
