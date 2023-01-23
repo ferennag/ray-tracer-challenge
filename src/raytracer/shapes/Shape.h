@@ -29,6 +29,7 @@ public:
     virtual Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }
+
     [[nodiscard]] const Bounds &getBounds() const;
 
     [[nodiscard]] Shape *getParent() const;
@@ -43,7 +44,7 @@ protected:
     glm::dmat4 m_modelInverse { glm::identity<glm::dmat4>() };
     glm::dmat4 m_modelInverseTranspose { glm::identity<glm::dmat4>() };
     mutable Bounds m_bounds;
-    mutable bool m_boundsReady;
+    mutable bool m_boundsReady { false };
 };
 
 #endif //RAY_TRACER_CHALLENGE_SHAPE_H

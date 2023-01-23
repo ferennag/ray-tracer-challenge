@@ -2,6 +2,10 @@
 #include "Intersections.h"
 
 std::optional<Intersection> Intersections::hit() const {
+    if (!m_sorted) {
+        sort();
+    }
+
     if (m_intersections.empty()) {
         return std::nullopt;
     }
@@ -23,22 +27,27 @@ void Intersections::addIntersection(const Shape *object, double distance) {
 
 void Intersections::addIntersection(const Shape *object, double distance, double u, double v) {
     m_intersections.push_back({ .distance = distance, .object = object, .u=u, .v=v });
-    sort();
+    m_sorted = false;
 }
 
 void Intersections::addIntersections(const Intersections &other) {
     for (const auto &x: other.m_intersections) {
         m_intersections.push_back(x);
     }
-    sort();
+    m_sorted = false;
 }
 
-void Intersections::sort() {
+void Intersections::sort() const {
     std::sort(m_intersections.begin(), m_intersections.end(), [](const Intersection &lhs, const Intersection &rhs) {
         return lhs.distance < rhs.distance;
     });
+    m_sorted = true;
 }
 
 std::vector<Intersection> &Intersections::getList() const {
+    if (!m_sorted) {
+        sort();
+    }
+
     return m_intersections;
 }

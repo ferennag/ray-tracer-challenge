@@ -12,7 +12,6 @@ Shape &Shape::withTransformation(const glm::dmat4 &transformation) {
     return *this;
 }
 
-
 glm::dmat4 Shape::getTransformation() const {
     return m_model;
 }

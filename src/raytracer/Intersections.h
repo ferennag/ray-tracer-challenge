@@ -18,8 +18,9 @@ public:
     std::vector<Intersection> &getList() const;
 private:
     mutable std::vector<Intersection> m_intersections;
+    mutable bool m_sorted { false };
 
-    void sort();
+    void sort() const;
 };
 
 
