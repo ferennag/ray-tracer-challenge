@@ -17,6 +17,8 @@ public:
     [[nodiscard]] glm::dvec4 getLocalNormalAt(const glm::dvec4 &point) const override;
     [[nodiscard]] Bounds bounds() const override;
 
+    Shape &withMaterial(const Material &material) override;
+
     void subdivide(int threshold) override;
 
 private:

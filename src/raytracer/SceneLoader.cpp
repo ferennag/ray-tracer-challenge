@@ -227,6 +227,7 @@ SceneLoader::parseShape(const YAML::Node &node, const std::map<std::string, Mate
     } else if (type == "obj") {
         auto objGroup = ObjLoader::loadObjFile(node["file"].as<std::string>());
         objGroup->withTransformation(SceneLoader::parseTransformations(node["transform"]));
+        objGroup->withMaterial(SceneLoader::parseMaterial(node["material"], materialDefinitions));
         objGroup->subdivide(1);
         return objGroup;
     } else if (type == "plane") {

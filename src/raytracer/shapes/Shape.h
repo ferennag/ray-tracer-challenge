@@ -24,9 +24,9 @@ public:
     [[nodiscard]] virtual glm::dvec4 getNormalAt(const glm::dvec4 &point) const;
     [[nodiscard]] virtual Color getColorAt(const glm::dvec4 &point) const;
 
-    Shape &withTransformation(const glm::dmat4 &transformation);
+    virtual Shape &withTransformation(const glm::dmat4 &transformation);
     [[nodiscard]] glm::dmat4 getTransformation() const;
-    Shape &withMaterial(const Material &material);
+    virtual Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }
 

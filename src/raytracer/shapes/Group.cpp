@@ -115,3 +115,12 @@ Group::partitionChildren() {
     return result;
 }
 
+Shape &Group::withMaterial(const Material &material) {
+    Shape::withMaterial(material);
+
+    for (auto &child: m_children) {
+        child->withMaterial(material);
+    }
+
+    return *this;
+}
