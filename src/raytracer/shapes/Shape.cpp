@@ -29,7 +29,7 @@ glm::dvec4 Shape::getNormalAt(const glm::dvec4 &point, const Intersection &hit) 
 }
 
 Intersections Shape::intersect(const Ray &ray) const {
-    auto bs = bounds();
+    auto bs = getBounds();
     auto localRay = ray.transform(m_modelInverse);
     if (!bs.intersect(localRay)) {
         return {};
@@ -78,4 +78,13 @@ glm::dvec4 Shape::normalToWorld(const glm::dvec4 &normal) const {
     }
 
     return result;
+}
+
+const Bounds &Shape::getBounds() const {
+    if(!m_boundsReady) {
+        m_bounds = calculateBounds();
+        m_boundsReady = true;
+    }
+
+    return m_bounds;
 }

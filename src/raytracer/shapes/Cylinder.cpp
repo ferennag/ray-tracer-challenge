@@ -81,7 +81,7 @@ void Cylinder::intersectCaps(const Ray &ray, Intersections &xs) const {
 Cylinder::Cylinder(Shape *parent) : Shape(parent) {
 }
 
-Bounds Cylinder::bounds() const {
+Bounds Cylinder::calculateBounds() const {
     return {{ -1, -m_minimum, -1, 1 },
             { 1,  m_maximum,  1,  1 }};
 }

@@ -15,7 +15,7 @@ public:
 
     [[nodiscard]] Intersections localIntersect(const Ray &ray) const override;
     [[nodiscard]] glm::dvec4 getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const override;
-    [[nodiscard]] Bounds bounds() const override;
+    [[nodiscard]] Bounds calculateBounds() const override;
 
     Shape &withMaterial(const Material &material) override;
 
@@ -23,10 +23,6 @@ public:
 
 private:
     std::vector<std::shared_ptr<Shape>> m_children;
-    mutable Bounds m_bounds;
-    mutable bool m_boundsReady { false };
-
-    void calculateBounds() const;
     std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>> partitionChildren();
 };
 

@@ -1,5 +1,4 @@
 #include "Plane.h"
-#include "../../engine/util/RayMath.h"
 
 Plane::Plane(Shape *parent) : Shape(parent) {
 }
@@ -20,7 +19,7 @@ glm::dvec4 Plane::getLocalNormalAt(const glm::dvec4 &point, const Intersection &
     return { 0, 1, 0, 0 };
 }
 
-Bounds Plane::bounds() const {
+Bounds Plane::calculateBounds() const {
     return {{ -INFINITY, 0, -INFINITY, 1 },
             { INFINITY,  0, INFINITY,  1 }};
 }

@@ -50,6 +50,6 @@ glm::dvec4 Cube::getLocalNormalAt(const glm::dvec4 &point, const Intersection &h
     }
 }
 
-Bounds Cube::bounds() const {
+Bounds Cube::calculateBounds() const {
     return {{ -1, -1, -1, 1 }, { 1, 1, 1, 1 }};
 }

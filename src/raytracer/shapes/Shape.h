@@ -20,7 +20,7 @@ public:
     [[nodiscard]] virtual Intersections intersect(const Ray &ray) const;
     [[nodiscard]] virtual Intersections localIntersect(const Ray &ray) const = 0;
     [[nodiscard]] virtual glm::dvec4 getLocalNormalAt(const glm::dvec4 &point, const Intersection &hit) const = 0;
-    [[nodiscard]] virtual Bounds bounds() const = 0;
+    [[nodiscard]] virtual Bounds calculateBounds() const = 0;
     [[nodiscard]] virtual glm::dvec4 getNormalAt(const glm::dvec4 &point, const Intersection &hit) const;
     [[nodiscard]] virtual Color getColorAt(const glm::dvec4 &point) const;
 
@@ -29,6 +29,7 @@ public:
     virtual Shape &withMaterial(const Material &material);
 
     [[nodiscard]] const Material &getMaterial() const { return m_material; }
+    [[nodiscard]] const Bounds &getBounds() const;
 
     [[nodiscard]] Shape *getParent() const;
     void setParent(Shape *parent);
@@ -41,6 +42,8 @@ protected:
     glm::dmat4 m_model { glm::identity<glm::dmat4>() };
     glm::dmat4 m_modelInverse { glm::identity<glm::dmat4>() };
     glm::dmat4 m_modelInverseTranspose { glm::identity<glm::dmat4>() };
+    mutable Bounds m_bounds;
+    mutable bool m_boundsReady;
 };
 
 #endif //RAY_TRACER_CHALLENGE_SHAPE_H

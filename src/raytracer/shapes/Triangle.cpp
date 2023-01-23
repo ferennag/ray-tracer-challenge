@@ -43,7 +43,7 @@ glm::dvec4 Triangle::getLocalNormalAt(const glm::dvec4 &point, const Intersectio
     return m_normal;
 }
 
-Bounds Triangle::bounds() const {
+Bounds Triangle::calculateBounds() const {
     auto minX = std::min(std::min(m_a.x, m_b.x), m_c.x);
     auto minY = std::min(std::min(m_a.y, m_b.y), m_c.y);
     auto minZ = std::min(std::min(m_a.z, m_b.z), m_c.z);

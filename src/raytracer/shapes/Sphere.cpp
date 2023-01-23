@@ -33,6 +33,6 @@ glm::dvec4 Sphere::getLocalNormalAt(const glm::dvec4 &point, const Intersection 
     return point - m_position;
 }
 
-Bounds Sphere::bounds() const {
+Bounds Sphere::calculateBounds() const {
     return {{ -1, -1, -1, 1 }, { 1, 1, 1, 1 }};
 }

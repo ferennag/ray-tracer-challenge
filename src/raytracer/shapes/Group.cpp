@@ -35,29 +35,19 @@ glm::dvec4 Group::getLocalNormalAt(const glm::dvec4 &point, const Intersection &
     throw std::runtime_error("ERROR: calling local_normal_at on Group!");
 }
 
-Bounds Group::bounds() const {
-    if (!m_boundsReady) {
-        calculateBounds();
-    }
-
-    return m_bounds;
-}
-
-void Group::calculateBounds() const {
+Bounds Group::calculateBounds() const {
     if (m_children.empty()) {
-        m_bounds = {{ 0, 0, 0, 1 },
-                    { 0, 0, 0, 1 }};
+        return {{ 0, 0, 0, 1 },
+                { 0, 0, 0, 1 }};
     } else {
         Bounds result;
         for (auto &child: m_children) {
-            auto bounds = child->bounds();
+            auto bounds = child->calculateBounds();
             auto groupSpaceBounds = bounds.transform(child->getTransformation());
             result = result.extend(groupSpaceBounds);
         }
-        m_bounds = result;
+        return result;
     }
-
-    m_boundsReady = true;
 }
 
 void Group::subdivide(int threshold) {
@@ -97,11 +87,11 @@ std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape
 Group::partitionChildren() {
     std::pair<std::vector<std::shared_ptr<Shape>>, std::vector<std::shared_ptr<Shape>>> result;
 
-    auto [leftBound, rightBound] = bounds().split();
+    auto [leftBound, rightBound] = calculateBounds().split();
 
     std::vector<std::shared_ptr<Shape>> remainingChildren;
     for (auto &child: m_children) {
-        auto childBounds = child->bounds();
+        auto childBounds = child->calculateBounds();
         if (leftBound.includes(childBounds)) {
             result.first.push_back(child);
         } else if (rightBound.includes(childBounds)) {
